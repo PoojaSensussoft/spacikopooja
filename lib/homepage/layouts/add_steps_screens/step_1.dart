@@ -2,46 +2,55 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
-class FirstStep extends StatefulWidget {
-   Function(int) onChangeFunction;
-   int currentPage;
-   PageController pageController;
 
-  FirstStep(int currentPage, PageController pageController, {onChangeFunction});
+class FirstStep extends StatefulWidget {
+  var curStep;
+  Function(int) onChangeFunction;
+
+  FirstStep(this.curStep, {this.onChangeFunction});
 
   @override
   _FirstStepState createState() => _FirstStepState();
 }
 
 
-Future<bool> _onBackPressed() {
-  var currentPage;
-  PageController pageController;
-
-  print('ONBACKKK:::::$currentPage');
-  return pageController.previousPage(duration: Duration(milliseconds: 30), curve: Curves.ease);
+Future<bool> _onWillPop() async {
+  return (await showDialog(
+    builder: (context) => new AlertDialog(
+      title: new Text('Are you sure?'),
+      content: new Text('Do you want to exit an App'),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: new Text('No'),
+        ),
+        new FlatButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: new Text('Yes'),
+        ),
+      ],
+    ),
+  )) ?? false;
 }
 
 
 class _FirstStepState extends State<FirstStep> {
-  _FirstStepState();
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
+    return new WillPopScope(
+      onWillPop: _onWillPop,
       child: Container(
-          margin: EdgeInsets.all(100),
-          child: RaisedButton(
-            color: spacikoColor.ColorPrimary,
-            onPressed: () {
-              widget.onChangeFunction(1);
-            },
-            child: Text('Step 2',
-                style: TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
-          ),
+        alignment: Alignment.center,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              widget.onChangeFunction(widget.curStep);
+            });
+          },
+          child: Text('Continue 2',
+              style: TextStyle(fontSize: 14, color: spacikoColor.Colorblack)),
         ),
+      ),
     );
   }
-
 }

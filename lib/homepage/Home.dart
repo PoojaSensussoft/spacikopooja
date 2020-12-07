@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/homepage/layouts/NewAddNav.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 import 'layouts/AddNav.dart';
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     ),
 
     Container(
-      child: AddSpaces(),
+      child: NewAddNav(),
     ),
 
     Container(

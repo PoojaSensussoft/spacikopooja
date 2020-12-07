@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_1.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_2.dart';
 import 'package:spacikopooja/model/CustomStep.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
+
+import 'add_steps_screens/step_1.dart';
 
 
 class AddSpaces extends StatefulWidget {
@@ -40,14 +41,16 @@ class _AddNavState extends State<AddNav> {
     if (pageController.page.round() == pageController.initialPage)
       return true;
 
-    pageController.previousPage(duration: Duration(milliseconds: 30), curve: Curves.ease);
+    pageController.previousPage(
+        duration: Duration(milliseconds: 30), curve: Curves.ease);
     pageController?.jumpToPage(pageController.initialPage);
     return false;
   }
 
   Future<bool> _onBackPressed() {
     print('ONBACKKK:::::$currentPage');
-    return pageController.previousPage(duration: Duration(milliseconds: 30), curve: Curves.ease);
+    return pageController.previousPage(
+        duration: Duration(milliseconds: 30), curve: Curves.ease);
   }
 
 
@@ -56,13 +59,13 @@ class _AddNavState extends State<AddNav> {
     super.initState();
 
     stepsList = [
-      CustomStep(
-          page: FirstStep(currentPage, pageController, onChangeFunction: (val)=> setState(()=>currentPage =val),)
-      ),
+      // CustomStep(
+      // page: FirstStep(current = 1, onChangeFunction: (val) => currentPage = val)
+      // ),
 
-      CustomStep(
-        page: SecondStep(currentPage, pageController, onChangeFunction: (val)=> setState(()=>currentPage =val),)
-      ),
+      // CustomStep(
+      //     page: SecondStep(2, onChangeFunction: (val) => setState(() => currentPage = val),)
+      // ),
 
       CustomStep(
           page: Container(
@@ -70,14 +73,16 @@ class _AddNavState extends State<AddNav> {
               color: spacikoColor.ColorPrimary,
               onPressed: () {
                 setState(() {
-                  pageController.nextPage(curve: Curves.easeInOutSine,duration: Duration(milliseconds: 300));
+                  pageController.nextPage(curve: Curves.easeInOutSine,
+                      duration: Duration(milliseconds: 300));
                 });
               },
               child: Text('Next 3',
                   style:
-                      TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
+                  TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
             ),
           )),
+
 
       CustomStep(
           page: Container(
@@ -85,12 +90,13 @@ class _AddNavState extends State<AddNav> {
               color: spacikoColor.ColorPrimary,
               onPressed: () {
                 setState(() {
-                  pageController.nextPage(curve: Curves.easeInOutSine,duration: Duration(milliseconds: 300));
+                  pageController.nextPage(curve: Curves.easeInOutSine,
+                      duration: Duration(milliseconds: 300));
                 });
               },
               child: Text('Next 4',
                   style:
-                      TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
+                  TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
             ),
           )),
 
@@ -101,12 +107,13 @@ class _AddNavState extends State<AddNav> {
               color: spacikoColor.ColorPrimary,
               onPressed: () {
                 setState(() {
-                  pageController.nextPage(curve: Curves.easeInOutSine,duration: Duration(milliseconds: 300));
+                  pageController.nextPage(curve: Curves.easeInOutSine,
+                      duration: Duration(milliseconds: 300));
                 });
               },
               child: Text('Next 5',
                   style:
-                      TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
+                  TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
             ),
           )
       ),
@@ -118,16 +125,19 @@ class _AddNavState extends State<AddNav> {
               color: spacikoColor.ColorPrimary,
               onPressed: () {
                 setState(() {
-                  pageController.nextPage(curve: Curves.easeInOutSine,duration: Duration(milliseconds: 300));
+                  pageController.nextPage(curve: Curves.easeInOutSine,
+                      duration: Duration(milliseconds: 300));
                 });
               },
               child: Text('Next 6',
                   style:
-                      TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
+                  TextStyle(fontSize: 14, color: spacikoColor.Colorwhite)),
             ),
           )),
     ];
   }
+
+
 
   @override
   void dispose() {
@@ -151,10 +161,11 @@ class _AddNavState extends State<AddNav> {
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemCount: stepsList.length,
-            itemBuilder: (ctx, index) => index < stepsList.length - 1
+            itemBuilder: (ctx, index) =>
+            index < stepsList.length - 1
                 ? Row(children: <Widget>[
-                      buildStep(index),
-                      buildStepDivider(index)])
+              buildStep(index),
+              buildStepDivider(index)])
                 : Row(children: <Widget>[buildStep(index)]
             )
         ),
@@ -224,17 +235,17 @@ class _AddNavState extends State<AddNav> {
 
                   Expanded(
                       child: PageView.builder(
-                    controller: pageController,
-                    physics: NeverScrollableScrollPhysics(),
+                        controller: pageController,
+                        physics: NeverScrollableScrollPhysics(),
 
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentPage = index;
-                      });
-                    },
-                    itemCount: stepsList.length,
-                    itemBuilder: (ctx, index) => stepsList[index].page,
-                  )),
+                        onPageChanged: (index) {
+                          setState(() {
+                            currentPage = index;
+                          });
+                        },
+                        itemCount: stepsList.length,
+                        itemBuilder: (ctx, index) => stepsList[index].page,
+                      )),
                 ],
               ),
             ),
@@ -243,9 +254,6 @@ class _AddNavState extends State<AddNav> {
       ),
     );
   }
+
+
 }
-
-
-
-
-

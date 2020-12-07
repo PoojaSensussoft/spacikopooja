@@ -2,21 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
-class ThirdStep extends StatefulWidget {
+class FifthStep extends StatefulWidget {
   Function(int) onChangeFunction;
   var currentpage;
 
-  ThirdStep(this.currentpage,{this.onChangeFunction});
+  FifthStep(this.currentpage,{this.onChangeFunction});
 
   @override
-  _ThirdStepState createState() => _ThirdStepState();
+  _FifthStepState createState() => _FifthStepState();
 }
 
-class _ThirdStepState extends State<ThirdStep> {
+class _FifthStepState extends State<FifthStep> {
   @override
   Widget build(BuildContext context) {
     return Container(
-
       alignment: Alignment.center,
       child: InkWell(
         onTap: () {
@@ -24,9 +23,10 @@ class _ThirdStepState extends State<ThirdStep> {
             widget.onChangeFunction(widget.currentpage);
           });
         },
-        child: Text('Continue 4',
+        child: Text('Continue 6',
             style: TextStyle(fontSize: 14, color: spacikoColor.Colorblack)),
       ),
+
     );
   }
 }
