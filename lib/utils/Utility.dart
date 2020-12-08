@@ -6,11 +6,12 @@ class Utility{
 
   static showToast(String message){
     Fluttertoast.showToast(
+      fontSize: 14,
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.black,
         textColor: Colors.white
     );
   }

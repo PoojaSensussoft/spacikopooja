@@ -43,7 +43,7 @@ class _AddNavState extends State<NewAddNav> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30)),
-                  color: spacikoColor.Colorwhite),
+                color: spacikoColor.Colorlihgt_green,),
 
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -51,7 +51,7 @@ class _AddNavState extends State<NewAddNav> {
                 children: <Widget>[
 
                   Container(
-                    margin: EdgeInsets.only(top: 20, left: 17, right: 17),
+                    margin: EdgeInsets.all(20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: _ListWidegts(),
@@ -79,8 +79,8 @@ class _AddNavState extends State<NewAddNav> {
 
       list.add(
         Container(
-          width: 30.0,
-          height: 30.0,
+          width: 32.0,
+          height: 32.0,
           child: Center(
             child: Text(value, style: TextStyle(color: Colors.white),),),
           decoration: new BoxDecoration(

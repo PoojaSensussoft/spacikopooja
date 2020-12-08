@@ -73,8 +73,8 @@ class _LoginState extends State<Login> {
                         controller: email,
                         cursorColor: spacikoColor.ColorPrimary,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
 
+                        decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(left: 20),
                           labelText: "Email",
                           labelStyle: TextStyle(fontSize: 16, fontFamily: "poppins_regular"),
@@ -200,7 +200,8 @@ class _LoginState extends State<Login> {
                       text: TextSpan(
                         text: "Not a member?",
                         style: TextStyle(fontSize: 16, fontFamily: "poppins_regular", color: spacikoColor.Colorlightblack),
-                        children: <TextSpan>[
+
+                          children: <TextSpan>[
                           TextSpan(text: ' Register', style: TextStyle(fontSize: 17, fontFamily: "poppins_medium",
                               color: spacikoColor.ColorPrimary),
 
