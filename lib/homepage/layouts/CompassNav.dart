@@ -241,8 +241,7 @@ class _CompassState extends State<CompassNav> {
                   child: _lng != null
                       ? GoogleMap(
 
-                    initialCameraPosition:
-                    CameraPosition(target: _lng, zoom: 8),
+                    initialCameraPosition: CameraPosition(target: _lng, zoom: 8),
                     markers: _markers,
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);

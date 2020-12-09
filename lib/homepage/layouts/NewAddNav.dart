@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_10.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_11.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_12.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_2.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_3.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_4.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_5.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_6.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_7.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_9.dart';
 import 'package:spacikopooja/model/CustomStep.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 import 'add_steps_screens/step_1.dart';
+import 'add_steps_screens/step_8.dart';
 
 
 class NewAddNav extends StatefulWidget {
@@ -16,10 +22,10 @@ class NewAddNav extends StatefulWidget {
 }
 
 class _AddNavState extends State<NewAddNav> {
-  List<String> _list = ['1', '2', '3', '4', '5', '6'];
+  List<String> _list;
   var activeColor = spacikoColor.ColorPrimary;
   var inActiveColor = spacikoColor.ColorOpacity;
-  int currentIndex = 0;
+  int currentIndex = 1;
 
   @override
   void initState() {
@@ -73,19 +79,25 @@ class _AddNavState extends State<NewAddNav> {
 
   List<Widget> _ListWidegts() {
     var list = <Widget>[];
+
+    print('curr:::$currentIndex');
+
+    if(currentIndex<7){
+      _list = ['1', '2', '3', '4', '5', '6'];
+    }else{
+      _list = ['7', '8', '9', '10', '11', '12'];
+    }
+
     _list.asMap().forEach((i, value) {
       var circleColor =
-      (i == currentIndex) ? activeColor : inActiveColor;
+      (int.parse(_list[i]) == currentIndex) ? activeColor : inActiveColor;
 
       list.add(
-        Container(
-          width: 32.0,
-          height: 32.0,
+        Container(width: 32.0, height: 32.0,
           child: Center(
             child: Text(value, style: TextStyle(color: Colors.white),),),
-          decoration: new BoxDecoration(
-            color: circleColor,
-            borderRadius: new BorderRadius.all(new Radius.circular(25.0)),
+
+          decoration: new BoxDecoration(color: circleColor, borderRadius: new BorderRadius.all(new Radius.circular(25.0)),
           ),
         ),
       );
@@ -105,23 +117,42 @@ class _AddNavState extends State<NewAddNav> {
 
 
   Widget _setLayout() {
-    if(currentIndex ==0){
-      return FirstStep(1,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    if(currentIndex ==1){
+      // return FirstStep(2,onChangeFunction: (val) => setState(()=>currentIndex = val));
+      return TwelveStep(12,onChangeFunction: (val) => setState(()=>currentIndex = val));
 
-    } else if(currentIndex==1){
-      return SecondStep(2,onChangeFunction: (val) => setState(()=>currentIndex = val));
-
-    }else if(currentIndex==2){
-      return ThirdStep(3,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    } else if(currentIndex==2){
+      return SecondStep(3,onChangeFunction: (val) => setState(()=>currentIndex = val));
 
     }else if(currentIndex==3){
-      return ForthStep(4,onChangeFunction: (val) => setState(()=>currentIndex = val));
+      return ThirdStep(4,onChangeFunction: (val) => setState(()=>currentIndex = val));
 
     }else if(currentIndex==4){
-      return FifthStep(5,onChangeFunction: (val) => setState(()=>currentIndex = val));
+      return ForthStep(5,onChangeFunction: (val) => setState(()=>currentIndex = val));
+
+    }else if(currentIndex==5){
+      return FifthStep(6,onChangeFunction: (val) => setState(()=>currentIndex = val));
     }
-    else if(currentIndex==5){
-      return SixStep(6,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if(currentIndex==6){
+      return SixStep(7,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    }
+    else if(currentIndex==7){
+      return SevenStep(8,onChangeFunction: (val) => setState(()=>currentIndex = val));
+
+    }else if(currentIndex==8){
+      return EightStep(9,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    }
+    else if(currentIndex==9){
+      return NineStep(10,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    }
+    else if(currentIndex==10){
+      return TenthStep(11,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    }
+    else if(currentIndex==11){
+      return ElevenStep(12,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    }
+    else if(currentIndex==12){
+      return TwelveStep(12,onChangeFunction: (val) => setState(()=>currentIndex = val));
     }
   }
 }

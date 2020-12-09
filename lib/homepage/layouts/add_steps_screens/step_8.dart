@@ -4,39 +4,37 @@ import 'package:spacikopooja/model/ModelClass.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
-class ForthStep extends StatefulWidget {
+
+class EightStep extends StatefulWidget {
   Function(int) onChangeFunction;
   var currentpage;
 
-  ForthStep(this.currentpage,{this.onChangeFunction});
+  EightStep(this.currentpage,{this.onChangeFunction});
 
   @override
-  _ForthStepState createState() => _ForthStepState();
+  _EightStepState createState() => _EightStepState();
 }
 
-class _ForthStepState extends State<ForthStep> {
+class _EightStepState extends State<EightStep> {
   List<ModelClass> _list = <ModelClass>[
-    ModelClass(title: 'Body Temperature Thermometer'),
-    ModelClass(title: 'Hand Sanitizer'),
-    ModelClass(title: 'Air Condition'),
-    ModelClass(title: 'ADSL Internet'),
-    ModelClass(title: 'Wireless Internet'),
+    ModelClass(title: 'No Visitors'),
+    ModelClass(title: 'No Smoking'),
+    ModelClass(title: 'No Cooking'),
+    ModelClass(title: 'No Loud Music'),
   ];
 
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: 20),
       child: Column(
         children: [
 
           Container(
-            margin: EdgeInsets.only(top: 10),
-            child: Text('Please Select all of the amenities that\ncan be found in your space. tick as few\nor more as are relevant',
+            padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+            child: Text('Got any rules you need guests to respect? Please tick to all that apply',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)
-            ),
+                style: TextStyle(fontSize: 18, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)),
             alignment: Alignment.center,
           ),
 
@@ -67,7 +65,8 @@ class _ForthStepState extends State<ForthStep> {
 
                           Container(height: 23, width: 23,
                             child: ClipOval(
-                              child: Material(color: _list[index].selected ? spacikoColor.ColorPrimary : spacikoColor.Colorwhite,),
+                              child: Material(color: _list[index].selected ? spacikoColor.ColorPrimary : spacikoColor.Colorwhite,
+                              ),
                             ),
                           ),
 
@@ -83,6 +82,7 @@ class _ForthStepState extends State<ForthStep> {
               },
             ),
           ),
+
 
 
           Container(
@@ -117,12 +117,10 @@ class _ForthStepState extends State<ForthStep> {
             ),
           ),
 
+
         ],
       ),
 
     );
   }
 }
-
-
-
