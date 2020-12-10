@@ -107,11 +107,8 @@ class _ForthStepState extends State<ForthStep> {
                     }
                   }
 
-                  if (!bool) {
-                    Utility.showToast('Please Select field');
-                  } else {
-                    widget.onChangeFunction(widget.currentpage);
-                  }
+                  !bool? Utility.showToast('Please Select field') : widget.onChangeFunction(widget.currentpage);
+
                 });
               },
             ),

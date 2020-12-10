@@ -167,11 +167,7 @@ class _FirstStepState extends State<FirstStep> {
                   ),
 
                   onPressed: () {
-                    if(_currentCity=='Select'){
-                      Utility.showToast('Please Select type');
-                    }else{
-                      widget.onChangeFunction(widget.curStep);
-                    }
+                    _currentCity=='Select'? Utility.showToast('Please Select type'): widget.onChangeFunction(widget.curStep);
                   },
                 ),
               ),

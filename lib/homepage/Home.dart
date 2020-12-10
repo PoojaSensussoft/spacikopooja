@@ -1,17 +1,15 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/homepage/layouts/NewAddNav.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-
-import 'layouts/AddNav.dart';
 import 'layouts/CalenderNav.dart';
 import 'layouts/CommentNav.dart';
 import 'layouts/CompassNav.dart';
 import '../utils/CustomBottomNav.dart';
 import 'layouts/UserProfileNav.dart';
 
+
 void main() => runApp(Home());
+
 
 class Home extends StatelessWidget {
   @override

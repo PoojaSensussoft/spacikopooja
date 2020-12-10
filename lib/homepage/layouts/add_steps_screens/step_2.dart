@@ -170,12 +170,9 @@ class _SecondStepState extends State<SecondStep> {
                     ),
 
                     onPressed: () {
-                      if(countSpace== -1 && countSharePrivate== -1 && countExperience== -1) {
-                        Utility.showToast('Please fill all the field');
-
-                      }else if(_formKey.currentState.validate()){
-                        widget.onChangeFunction(widget.currentpage);
-                      }
+                      countSpace== -1 || countSharePrivate== -1 || countExperience== -1 ||!_formKey.currentState.validate()
+                          ? Utility.showToast('Please fill all the field')
+                          : widget.onChangeFunction(widget.currentpage);
                     },
                   ),
                 ),

@@ -142,11 +142,7 @@ class _ThirdStepState extends State<ThirdStep> {
                   borderRadius: BorderRadius.circular(30)),
 
               onPressed: () {
-                if (countSpace == -1) {
-                  Utility.showToast('Please Select field');
-                } else {
-                  widget.onChangeFunction(widget.currentpage);
-                }
+                countSpace == -1? Utility.showToast('Please Select field') :widget.onChangeFunction(widget.currentpage);
               },
             ),
           ),

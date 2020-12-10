@@ -78,12 +78,9 @@ TextEditingController summary = new TextEditingController();
               onPressed: () {
                 setState(() {
 
-                  if (listname.text.isEmpty || summary.text.isEmpty) {
-                    Utility.showToast('Please Select field');
+                  listname.text.isEmpty || summary.text.isEmpty? Utility.showToast('Please Select field')
+                      : widget.onChangeFunction(widget.currentpage);
 
-                  } else {
-                    widget.onChangeFunction(widget.currentpage);
-                  }
                 });
               },
             ),

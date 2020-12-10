@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
@@ -19,7 +19,7 @@ class SevenStep extends StatefulWidget {
 class _SevenStepState extends State<SevenStep> {
   TextEditingController comemnt = new TextEditingController();
   File _image;
-  List<File> imageList = new List();
+  List<Asset> imageList = new List();
   bool isVisible;
 
   @override
@@ -58,9 +58,8 @@ class _SevenStepState extends State<SevenStep> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GestureDetector(
-                onTap: (){
-                  _showPicker(context);
-                },
+                onTap: loadAssets,
+
                 child: Container(
                   alignment: Alignment.center,
                   height: 38,
@@ -80,43 +79,10 @@ class _SevenStepState extends State<SevenStep> {
 
            Visibility(
              visible: isVisible,
-
-             child: Container(
-               margin: EdgeInsets.only(left: 20, right: 20),
-          //      child: GridView.count(
-          //        padding: EdgeInsets.zero,
-          //        shrinkWrap: true,
-          //        physics: NeverScrollableScrollPhysics(),
-          //        scrollDirection: Axis.vertical,
-          //       crossAxisCount: 4,
-          //
-          //       children: List.generate(5, (index) {
-          //         return Container(
-          //           alignment: Alignment.center,
-          //               child: Container(
-          //                     decoration: BoxDecoration(color: spacikoColor.ColorPrimary),
-          //                     height: 60,
-          //                     width: 60,
-          //                       child: imageList.length != 0
-          //                           ? ClipRRect(
-          //                         borderRadius: BorderRadius.circular(50),
-          //                         child: Image.file(imageList[index], width: 100, height: 100, fit: BoxFit.fitHeight,),
-          //                       ):
-          //                       Container(decoration: BoxDecoration(color: Colors.grey[200],
-          //                           borderRadius: BorderRadius.circular(50)), width: 60, height: 100,
-          //                         child: Icon(Icons.camera_alt, color: Colors.grey[800]),
-          //                       )
-          //               )
-          //
-          //         );
-          //       }),
-          // ),
-
-               child: Container(
-                 height: 70,
-                   width: 70,
-                   child: _image!=null ?Image.file(_image) : null),
-             ),
+               child:  Container(
+                 margin: EdgeInsets.only(left: 25, right: 25),
+                 child: buildGridView(),
+                 padding: EdgeInsets.zero)
            ),
 
           containerComment(),
@@ -137,11 +103,8 @@ class _SevenStepState extends State<SevenStep> {
 
               onPressed: () {
                 setState(() {
-                  if(comemnt.text.isEmpty){
-                    Utility.showToast("Please add Comment");
-                  }else{
-                    widget.onChangeFunction(widget.currentpage);
-                  }
+
+                  comemnt.text.isEmpty? Utility.showToast("Please add Comment"): widget.onChangeFunction(widget.currentpage);
                 });
               },
             ),
@@ -155,7 +118,7 @@ class _SevenStepState extends State<SevenStep> {
 
   Widget containerComment(){
     return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 25),
+      padding: EdgeInsets.only(left: 20, right: 20, top: 20),
 
       child: Material(
         elevation: 2,
@@ -187,60 +150,77 @@ class _SevenStepState extends State<SevenStep> {
   }
 
 
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
 
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _imgFromGallery();
-                        Navigator.of(context).pop();
-                      }),
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 5,
+        enableCamera: true,
+        selectedAssets: imageList,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Ilma",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
 
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _imgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
+    if (!mounted) return;
+
+    setState(() {
+      imageList = resultList;
+      imageList.length!=0 ? isVisible = true : isVisible = false;
+      error = error;
+    });
+  }
+
+  Widget buildGridView() {
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 5,
+      scrollDirection: Axis.vertical,
+
+      children: List.generate(imageList.length, (index) {
+        Asset asset = imageList[index];
+        return Stack(
+          children: [
+            AssetThumb(
+              asset: asset,
+              width: 55,
+              height: 55,
             ),
-          );
-        }
+
+            Container(
+              width: 55,
+              height: 55,
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: (){
+                  setState(() {
+                    imageList.removeAt(index);
+                    imageList.length!=0 ? isVisible = true: isVisible = false;
+                  });
+                },
+
+                child: Container(transform: Matrix4.translationValues(5.0, -5.0, 0.0),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: spacikoColor.Colorpink),
+                  width: 17,
+                  height: 17,
+                  child: Icon(Icons.close_rounded, color: spacikoColor.Colorwhite, size: 15,),
+                ),
+              ),
+            )
+          ],
+        );
+      }),
     );
-  }
-
-  _imgFromCamera() async {
-    File image = (await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50));
-
-    setState(() {
-      _image = image;
-      isVisible = true;
-      imageList.add(_image);
-    });
-  }
-
-  _imgFromGallery() async {
-    File image = (await  ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50
-    ));
-
-    setState(() {
-      _image = image;
-      isVisible = true;
-      imageList.add(_image);
-    });
   }
 
 }
