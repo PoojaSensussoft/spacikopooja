@@ -53,10 +53,7 @@ class _FifthStepState extends State<FifthStep> {
 
   _getCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-
+    geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
       setState(() {
         _currentPosition = position;
         print('LatLong 111::::$_currentPosition');
@@ -128,9 +125,7 @@ class _FifthStepState extends State<FifthStep> {
                    focusedBorder: InputBorder.none,
                    enabledBorder: InputBorder.none,
                    labelStyle: TextStyle(fontSize: 16, fontFamily: "poppins_regular"),
-
                  ),
-
                ),
              ),
            ),
@@ -144,10 +139,12 @@ class _FifthStepState extends State<FifthStep> {
                 width: MediaQuery.of(context).size.width,
                 color: spacikoColor.Colorwhite,
 
-                child: _lng != null
-                    ? GoogleMap(
+                // child: _lng != null ? GoogleMap(
+                child:GoogleMap(
                   myLocationButtonEnabled: false,
-                  initialCameraPosition: CameraPosition(target: _lng, zoom: 8),
+                  // initialCameraPosition: CameraPosition(target: _lng, zoom: 8),
+                  initialCameraPosition: CameraPosition(target: LatLng(21.170240, 72.831062), zoom: 8),
+
                   markers: _markers,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
@@ -158,13 +155,11 @@ class _FifthStepState extends State<FifthStep> {
                         )
                     );
                   },
+                )
 
-                ) : Center(
-                  child: CircularProgressIndicator(),
-                ),
+        // : Center(child: CircularProgressIndicator()),
               ),
             ),
-
 
           Container(
             width: MediaQuery.of(context).size.width,

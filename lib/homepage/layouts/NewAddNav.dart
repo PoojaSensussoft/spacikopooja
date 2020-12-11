@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_10.dart';
-import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_11.dart';
+import 'package:spacikopooja/homepage/layouts/add_steps_screens/step11/step_11.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_12.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_2.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_3.dart';
@@ -10,6 +10,7 @@ import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_6.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_7.dart';
 import 'package:spacikopooja/homepage/layouts/add_steps_screens/step_9.dart';
 import 'package:spacikopooja/model/CustomStep.dart';
+import 'package:spacikopooja/publishList/PublishList.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 import 'add_steps_screens/step_1.dart';
@@ -37,37 +38,44 @@ class _AddNavState extends State<NewAddNav> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
-          color: spacikoColor.ColorPrimary,
+        resizeToAvoidBottomInset: false,
 
-          child: Expanded(
+        body: WillPopScope(
+          onWillPop: _onBackPressed,
+          child: Container(
+            color: spacikoColor.ColorPrimary,
 
-            /*white rouned bg*/
-            child: Container(
-              margin: EdgeInsets.only(top: 90),
-              decoration: BoxDecoration(
+            child: Expanded(
+
+              /*white rouned bg*/
+              child: Container(
+                margin: EdgeInsets.only(top: 90),
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30)),
-                color: spacikoColor.Colorlihgt_green,),
+                  color: spacikoColor.Colorlihgt_green,),
 
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
 
-                  Container(
-                    margin: EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: _ListWidegts(),
+                child: currentIndex != 13 ? Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: _ListWidegts(),
+                      ),
                     ),
-                  ),
 
-                  Expanded(
-                    child: _setLayout(),
-                  )
-                ],
+                    Expanded(
+                      child: _setLayout(),
+                    )
+                  ],
+
+                ) : PublishList(),
               ),
             ),
           ),
@@ -82,9 +90,9 @@ class _AddNavState extends State<NewAddNav> {
 
     print('curr:::$currentIndex');
 
-    if(currentIndex<7){
+    if (currentIndex < 7) {
       _list = ['1', '2', '3', '4', '5', '6'];
-    }else{
+    } else {
       _list = ['7', '8', '9', '10', '11', '12'];
     }
 
@@ -97,7 +105,8 @@ class _AddNavState extends State<NewAddNav> {
           child: Center(
             child: Text(value, style: TextStyle(color: Colors.white),),),
 
-          decoration: new BoxDecoration(color: circleColor, borderRadius: new BorderRadius.all(new Radius.circular(25.0)),
+          decoration: new BoxDecoration(color: circleColor,
+            borderRadius: new BorderRadius.all(new Radius.circular(25.0)),
           ),
         ),
       );
@@ -117,46 +126,84 @@ class _AddNavState extends State<NewAddNav> {
 
 
   Widget _setLayout() {
-    if(currentIndex ==1){
-      // return FirstStep(2,onChangeFunction: (val) => setState(()=>currentIndex = val));
-      return ElevenStep(11,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    if (currentIndex == 1) {
+      return FirstStep(2, onChangeFunction: (val) => setState(() => currentIndex = val));
 
-    } else if(currentIndex==2){
-      return SecondStep(3,onChangeFunction: (val) => setState(()=>currentIndex = val));
-
-    }else if(currentIndex==3){
-      return ThirdStep(4,onChangeFunction: (val) => setState(()=>currentIndex = val));
-
-    }else if(currentIndex==4){
-      return ForthStep(5,onChangeFunction: (val) => setState(()=>currentIndex = val));
-
-    }else if(currentIndex==5){
-      return FifthStep(6,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    } else if (currentIndex == 2) {
+      return SecondStep(
+          3, onChangeFunction: (val) => setState(() => currentIndex = val));
+    } else if (currentIndex == 3) {
+      return ThirdStep(
+          4, onChangeFunction: (val) => setState(() => currentIndex = val));
+    } else if (currentIndex == 4) {
+      return ForthStep(
+          5, onChangeFunction: (val) => setState(() => currentIndex = val));
+    } else if (currentIndex == 5) {
+      return FifthStep(
+          6, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==6){
-      return SixStep(7,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 6) {
+      return SixStep(
+          7, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==7){
-      return SevenStep(8,onChangeFunction: (val) => setState(()=>currentIndex = val));
-
-    }else if(currentIndex==8){
-      return EightStep(9,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 7) {
+      return SevenStep(
+          8, onChangeFunction: (val) => setState(() => currentIndex = val));
+    } else if (currentIndex == 8) {
+      return EightStep(
+          9, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==9){
-      return NineStep(10,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 9) {
+      return NineStep(
+          10, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==10){
-      return TenthStep(11,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 10) {
+      return TenthStep(
+          11, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==11){
-      return ElevenStep(12,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 11) {
+      return ElevenStep(
+          12, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
-    else if(currentIndex==12){
-      return TwelveStep(12,onChangeFunction: (val) => setState(()=>currentIndex = val));
+    else if (currentIndex == 12) {
+      return TwelveStep(
+          13, onChangeFunction: (val) => setState(() => currentIndex = val));
     }
   }
-}
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('You are going to exit the application!!'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () {
+                  print('onBack:::$currentIndex');
+                  Navigator.of(context, rootNavigator: true).pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<T> pushPage<T>(BuildContext context, Widget page) {
+    return Navigator.of(context)
+        .push<T>(MaterialPageRoute(builder: (context) => page));
+  }
+
+}
 
 
 

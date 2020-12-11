@@ -32,8 +32,9 @@ class _ForthStepState extends State<ForthStep> {
         children: [
 
           Container(
+            padding: EdgeInsets.only(left: 10, right: 10),
             margin: EdgeInsets.only(top: 10),
-            child: Text('Please Select all of the amenities that\ncan be found in your space. tick as few\nor more as are relevant',
+            child: Text('Please Select all of the amenities that can be found in your space. tick as few or more as are relevant',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)
             ),
@@ -88,7 +89,7 @@ class _ForthStepState extends State<ForthStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 50),
+            margin: EdgeInsets.only(left: 25, right: 25, top: 50,bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

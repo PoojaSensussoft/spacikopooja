@@ -106,7 +106,8 @@ class _TwelveStepState extends State<TwelveStep> {
 
               onPressed: () {
                 setState(() {
-                  _currentCity ==_dropDownMenuItems[0].value ? Utility.showToast("Please Select policy"):widget.onChangeFunction(widget.currentpage);
+                  _currentCity ==_dropDownMenuItems[0].value ? Utility.showToast("Please Select policy")
+                      :widget.onChangeFunction(widget.currentpage);
                 });
               },
             ),
@@ -210,9 +211,7 @@ class _TwelveStepState extends State<TwelveStep> {
 
               ),
             ),
-
-
-
+            
           ],
         ),
       ),

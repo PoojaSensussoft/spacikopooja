@@ -15,27 +15,6 @@ class FirstStep extends StatefulWidget {
 }
 
 
-Future<bool> _onWillPop() async {
-  return (await showDialog(
-    builder: (context) =>
-    new AlertDialog(
-      title: new Text('Are you sure?'),
-      content: new Text('Do you want to exit an App'),
-      actions: <Widget>[
-        new FlatButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: new Text('No'),
-        ),
-        new FlatButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: new Text('Yes'),
-        ),
-      ],
-    ),
-  )) ?? false;
-}
-
-
 class _FirstStepState extends State<FirstStep> {
   List _cities = ["Select","Good", "Good1", "Good2"];
   List<DropdownMenuItem<String>> _dropDownMenuItems;
@@ -63,27 +42,28 @@ class _FirstStepState extends State<FirstStep> {
 
   @override
   Widget build(BuildContext context) {
-    return new WillPopScope(
-      onWillPop: _onWillPop,
-      child: Container(
-
-        child: SingleChildScrollView(
+    return Container(
+      child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
             SizedBox(height: 10,),
 
-          Container(
-            child: Text('Ready to replace your space in the\nSpotlight?',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18,
-                  fontFamily: 'poppins_semibold',
-                  color: spacikoColor.Colorblack),),
-            alignment: Alignment.center,),
+          Padding(
+            padding: EdgeInsets.only(left: 10, right: 10),
+            child: Container(
+              child: Text('Ready to replace your space in the Spotlight?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18,
+                    fontFamily: 'poppins_semibold',
+                    color: spacikoColor.Colorblack),),
+              alignment: Alignment.center,),
+          ),
 
           SizedBox(height: 12,),
 
           Container(
+            padding: EdgeInsets.only(left: 10, right: 10),
             child: RichText(
               textAlign: TextAlign.center,
 
@@ -97,7 +77,7 @@ class _FirstStepState extends State<FirstStep> {
                   style: TextStyle(color: spacikoColor.ColorPrimary,
                       fontFamily: 'poppins_medium', fontSize: 18)),
 
-                   TextSpan(text: 'each working space deserve a\nspacial care. Following these steps will allow\nyou to highlight each working space as a\nseparate listing ',
+                   TextSpan(text: 'each working space deserve a spacial care. Following these steps will allow you to highlight each working space as a separate listing ',
                       style: TextStyle(color: spacikoColor.ColorBlackLightText,
                           fontFamily: 'poppins_regular', fontSize: 18)),
                       ]
@@ -109,11 +89,12 @@ class _FirstStepState extends State<FirstStep> {
               SizedBox(height: 30,),
 
               Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
                 child: Text('What type of space do you own?',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 17,
                       fontFamily: 'poppins_semibold',
-                      color: spacikoColor.Colorblack),),
+                      color: spacikoColor.Colorblack)),
                 alignment: Alignment.center,),
 
               SizedBox(height: 20,),
@@ -150,31 +131,33 @@ class _FirstStepState extends State<FirstStep> {
               ),
 
 
-              SizedBox(height: 100),
+              SizedBox(height: 80),
 
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: 52,
-                margin: EdgeInsets.only(left: 25, right: 25, top: 10),
+                margin: EdgeInsets.only(left: 25, right: 25, bottom: 30),
+
                 child: RaisedButton(
                   color: spacikoColor.ColorPrimary,
 
                   child: Text("Continue", style: TextStyle(fontSize: 18,
-                      fontFamily: "poppins_semibold", color: spacikoColor.Colorwhite),),
+                      fontFamily: "poppins_semibold", color: spacikoColor.Colorwhite)),
 
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)
                   ),
 
                   onPressed: () {
-                    _currentCity=='Select'? Utility.showToast('Please Select type'): widget.onChangeFunction(widget.curStep);
+                    setState(() {
+                      _currentCity=='Select'? Utility.showToast('Please Select type'): widget.onChangeFunction(widget.curStep);
+                    });
                   },
                 ),
               ),
             ],
           ),
         ),
-      ),
     );
   }
 }

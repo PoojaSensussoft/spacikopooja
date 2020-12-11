@@ -39,6 +39,8 @@ class _TenthStepState extends State<TenthStep> {
             alignment: Alignment.center,
           ),
 
+          setSizeBox(15),
+
           setContainerText('Minimum Days', 2),
 
           setSizeBox(15),
@@ -145,7 +147,7 @@ class _TenthStepState extends State<TenthStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 20, right: 20, top: 25),
+            margin: EdgeInsets.only(left: 20, right: 20, top: 25, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

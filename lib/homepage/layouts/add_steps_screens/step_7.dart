@@ -35,17 +35,16 @@ class _SevenStepState extends State<SevenStep> {
         children: [
 
           Container(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+            padding: EdgeInsets.only(left: 15, right: 15, top: 10),
             child: Text('Use images to bring your space to life!',
                 textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 18, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)),
             alignment: Alignment.center,
           ),
 
 
           Container(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 15),
+            padding: EdgeInsets.only(left: 15, right: 15, top: 15),
             child: Text('Guests want to know what your space looks like. If you have photos, now\'s the time to share them! Don\'t worry- you can always come back later',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 17, fontFamily: 'poppins_regular', color: spacikoColor.ColorBlackLightText, height: 1.2,)),
@@ -92,7 +91,7 @@ class _SevenStepState extends State<SevenStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25),
+            margin: EdgeInsets.only(left: 25, right: 25, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

@@ -31,7 +31,7 @@ class _EightStepState extends State<EightStep> {
         children: [
 
           Container(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+            padding: EdgeInsets.only(left: 15, right: 15, top: 10),
             child: Text('Got any rules you need guests to respect? Please tick to all that apply',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)),
@@ -88,7 +88,7 @@ class _EightStepState extends State<EightStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 50),
+            margin: EdgeInsets.only(left: 25, right: 25, top: 50, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

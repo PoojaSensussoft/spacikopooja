@@ -16,16 +16,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: AppBar(
-            backgroundColor: spacikoColor.ColorPrimary,
-          ),
-        ),
-
-        body: HomePage(),
-      ),
+      home:  HomePage(),
     );
   }
 }
@@ -41,25 +32,34 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       home: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: AppBar(
+            backgroundColor: spacikoColor.ColorPrimary,
+          ),
+        ),
 
         /*set layout position*/
         body: _widgetOptions.elementAt(_selectedIndex),
 
+
         /*set bottom navigation*/
         bottomNavigationBar: SafeArea(
+          top: true,
           bottom: true,
-          child: CustomBottomNav(
-          onChange: (val) {
+          child: CustomBottomNav(onChange: (val){
             setState(() {
               _selectedIndex = val;
-              print(_selectedIndex);
             });
-          },
-        ),
-        ),
+          },),
+        )
+
       ),
     );
   }

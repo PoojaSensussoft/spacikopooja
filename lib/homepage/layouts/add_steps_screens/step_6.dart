@@ -88,7 +88,7 @@ class _SixStepState extends State<SixStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 50),
+            margin: EdgeInsets.only(left: 25, right: 25, top: 50, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

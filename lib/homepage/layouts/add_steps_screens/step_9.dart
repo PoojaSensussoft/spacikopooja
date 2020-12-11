@@ -66,7 +66,7 @@ TextEditingController summary = new TextEditingController();
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 50),
+            margin: EdgeInsets.only(left: 25, right: 25, top: 50, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",
@@ -78,7 +78,7 @@ TextEditingController summary = new TextEditingController();
               onPressed: () {
                 setState(() {
 
-                  listname.text.isEmpty || summary.text.isEmpty? Utility.showToast('Please Select field')
+                  listname.text.isEmpty || summary.text.isEmpty? Utility.showToast('Please enter field')
                       : widget.onChangeFunction(widget.currentpage);
 
                 });
@@ -94,8 +94,8 @@ TextEditingController summary = new TextEditingController();
 
   Widget setContainerText(String str, int align){
     return  Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-      child: Text(str,
+      padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+      child: Text(str, textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16, fontFamily: 'poppins_semibold', color: spacikoColor.Colorblack, height: 1.2,)),
       alignment: align==1? Alignment.center :Alignment.centerLeft,
     );

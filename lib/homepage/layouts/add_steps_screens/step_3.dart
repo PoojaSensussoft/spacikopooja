@@ -23,8 +23,9 @@ class _ThirdStepState extends State<ThirdStep> {
       child: Column(
         children: [
           Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
             margin: EdgeInsets.only(top: 10),
-            child: Text('How many working guests will fit into\nyour space?',
+            child: Text('How many working guests will fit into your space?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
@@ -105,6 +106,7 @@ class _ThirdStepState extends State<ThirdStep> {
           ),
 
           Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
             margin: EdgeInsets.only(top: 30),
             child: Text('Do you allow visitors during the rent?',
                 textAlign: TextAlign.center,
@@ -113,8 +115,7 @@ class _ThirdStepState extends State<ThirdStep> {
                   fontFamily: 'poppins_semibold',
                   color: spacikoColor.Colorblack,
                   height: 1.2,
-                ),
-                overflow: TextOverflow.ellipsis),
+                )),
             alignment: Alignment.center,
           ),
 
@@ -132,7 +133,7 @@ class _ThirdStepState extends State<ThirdStep> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 52,
-            margin: EdgeInsets.only(left: 25, right: 25, top: 50),
+            margin: EdgeInsets.only(left: 25, right: 25, top: 50, bottom: 30),
             child: RaisedButton(
               color: spacikoColor.ColorPrimary,
               child: Text("Continue",

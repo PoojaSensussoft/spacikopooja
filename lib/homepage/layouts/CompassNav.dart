@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spacikopooja/model/getLatLong.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
+
 class CompassNav extends StatefulWidget {
   @override
   _CompassState createState() => _CompassState();
@@ -25,6 +26,7 @@ class _CompassState extends State<CompassNav> {
     Choice(title: 'Property Type',),
   ];
 
+
   /*dialog propery list*/
   List<SelectProperty> _propertyList = <SelectProperty>[
     SelectProperty(propertyName: 'Meeting Room',),
@@ -34,6 +36,7 @@ class _CompassState extends State<CompassNav> {
     SelectProperty(propertyName: 'Shared Desk Area',),
     SelectProperty(propertyName: 'Shared Room',),
   ];
+
 
   /*google map*/
   Set<Marker> _markers = {};
@@ -51,6 +54,7 @@ class _CompassState extends State<CompassNav> {
   int _index = 0;
   double size;
   PageController _pageController;
+  TextEditingController search = TextEditingController();
 
   @override
   void initState() {
@@ -113,18 +117,21 @@ class _CompassState extends State<CompassNav> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: spacikoColor.Colorwhite,
+
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
 
-        child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
 
           /*top layout*/
           Container(
             padding: EdgeInsets.only(bottom: 10),
             color: spacikoColor.Colorwhite,
             child: Column(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
 
                 /*search edittext*/
@@ -138,28 +145,25 @@ class _CompassState extends State<CompassNav> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(2)),
                           child: TextField(
+                            controller: search,
                             cursorColor: Colors.grey,
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'poppins_regular',
-                                color: Colors.grey),
+                            style: TextStyle(fontSize: 16, fontFamily: 'poppins_regular', color: Colors.grey),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey,
-                                size: 30,
-                              ),
+                              prefixIcon: Icon(Icons.search, color: Colors.grey, size: 30),
                               hintText: "Address, city, zip, Neighborhood",
-                              hintStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'poppins_regular',
-                                  color: Colors.grey
-                              ),
+                              hintStyle: TextStyle(fontSize: 16, fontFamily: 'poppins_regular', color: Colors.grey),
                             ),
+
+                            onTap: (){
+                              setState(() {
+                                isScrollVisible = false;
+                              });
+                            },
                           ),
                         ),
                       ),
+
                       Container(
                         margin: EdgeInsets.only(right: 25, top: 25),
                         alignment: Alignment.centerRight,
@@ -172,6 +176,7 @@ class _CompassState extends State<CompassNav> {
                     ],
                   ),
                 ),
+
 
                 /*for select Time period*/
                 Container(
@@ -195,29 +200,23 @@ class _CompassState extends State<CompassNav> {
                             }
                           });
                         },
+
                         child: Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.only(
-                            left: 8,
-                          ),
-                          width: MediaQuery.of(context).size.width / 4,
+                          margin: EdgeInsets.only(left: 8,),
+                          width: 88,
 
                           child: Text(_list[index].title,
-                              style: TextStyle(
-                                fontFamily: 'poppins_regular',
-                                fontSize: 13,
-                                color: _list[index].selected
-                                    ? spacikoColor.Colorwhite
-                                    : spacikoColor.ColorPrimary,
-                              )),
+                              style: TextStyle(fontFamily: 'poppins_regular', fontSize: 13,
+                                color: _list[index].selected ? spacikoColor.Colorwhite : spacikoColor.ColorPrimary,
+                              )
+                          ),
 
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(3),
                             border: Border.all(color: spacikoColor.ColorPrimary),
 
-                            color: _list[index].selected
-                                ? spacikoColor.ColorPrimary
-                                : spacikoColor.Colorwhite,
+                            color: _list[index].selected ? spacikoColor.ColorPrimary : spacikoColor.Colorwhite,
                           ),
                         ),
                       );
@@ -229,20 +228,19 @@ class _CompassState extends State<CompassNav> {
           ),
 
 
-
           /*bottom layout*/
-          Flexible(
+          Expanded(
             child: Stack(
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width,
                   color: spacikoColor.Colorwhite,
 
-                  child: _lng != null
-                      ? GoogleMap(
 
-                    initialCameraPosition: CameraPosition(target: _lng, zoom: 8),
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(target: LatLng(21.170240, 72.831062), zoom: 8),
                     markers: _markers,
+
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
 
@@ -286,9 +284,9 @@ class _CompassState extends State<CompassNav> {
                       });
                     },
                   )
-                      : Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                      // : Center(
+                    // child: CircularProgressIndicator(),
+                  // ),
                 ),
 
 
@@ -324,6 +322,7 @@ class _CompassState extends State<CompassNav> {
                             /*white box desing*/
                             child: GestureDetector(
                               onTap: () {
+
                               },
 
                               child: Card(
@@ -376,16 +375,18 @@ class _CompassState extends State<CompassNav> {
                                               fontSize: 12,
                                               fontFamily: 'poppins_regular',
                                               color:
-                                              spacikoColor.Colorlightblack),
+                                              spacikoColor.Colorlightblack
+                                          ),
                                         ),
                                       ),
 
                                       /*rupees*/
                                       Container(
                                         alignment: Alignment.centerLeft,
-                                        margin: EdgeInsets.only(left: 10,),
-                                        child: Text('Lat : ${list[i].lat}   Lng : ${list[i].lng}', style: TextStyle(fontSize: 12, fontFamily: 'poppins_regular',
-                                            color: spacikoColor.Colorlightblack),
+                                        margin: EdgeInsets.only(left: 10),
+                                        child: Text('Lat : ${list[i].lat}   Lng : ${list[i].lng}',
+                                          style: TextStyle(fontSize: 12, fontFamily: 'poppins_regular',
+                                              color: spacikoColor.Colorlightblack),
                                         ),
                                       ),
 
