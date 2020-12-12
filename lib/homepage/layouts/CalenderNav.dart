@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:spacikopooja/publishList/CalenderView.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 
 class CalenderNav extends StatefulWidget {
@@ -17,14 +17,12 @@ class _CalenderNavState extends State<CalenderNav> {
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _currentCity;
 
-  CalendarController _controller;
 
   @override
   void initState() {
     _dropDownMenuItems = getDropDownMenuItems();
     _currentCity = _dropDownMenuItems[0].value;
 
-    _controller = CalendarController();
     super.initState();
   }
 
@@ -89,81 +87,9 @@ class _CalenderNavState extends State<CalenderNav> {
                     color: spacikoColor.Colorwhite
                 ),
 
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-
-                    children: <Widget>[
-                      TableCalendar(
-                        initialCalendarFormat: CalendarFormat.month,
-                        calendarStyle: CalendarStyle(
-                            markersAlignment: Alignment.center,
-                        todayColor: spacikoColor.ColorPrimary,
-                        selectedColor: spacikoColor.ColorPrimary,
-
-                        todayStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22.0,
-                            color: Colors.white),
-                    ),
-
-
-                    headerStyle: HeaderStyle(
-                      centerHeaderTitle: true,
-                      formatButtonDecoration: BoxDecoration(color: Colors.brown, borderRadius: BorderRadius.circular(22.0),
-                      ),
-                      formatButtonTextStyle: TextStyle(color: Colors.white), formatButtonShowsNext: false,
-                    ),
-
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-
-
-                    builders: CalendarBuilders(
-                      selectedDayBuilder: (context, date, events) => Container(
-                          margin: const EdgeInsets.all(10.0),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: spacikoColor.ColorPrimary,
-                              borderRadius: BorderRadius.circular(100.0)),
-
-                          child: Text(date.day.toString(), style: TextStyle(color: Colors.white),)),
-
-
-                      todayDayBuilder: (context, date, events) =>
-                          Container(
-                          margin: const EdgeInsets.all(10.0),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: spacikoColor.ColorPrimary,
-                              borderRadius: BorderRadius.circular(100.0)),
-
-                          child: Text(
-                            date.day.toString(),
-                            style: TextStyle(color: Colors.white),
-                          )
-                          ),
-                    ),
-
-                        calendarController: _controller,
-                      ),
-                    ],
-                  ),
-                ),
-
-
-                // child: VerticalCalendar(
-                //   minDate: DateTime.now(),
-                //   maxDate: DateTime.now().add(const Duration(days: 365)),
-                //
-                //   onDayPressed: (DateTime date) {
-                //     print('Date selected: $date');
-                //   },
-                // ),
+                child: CalendarView(),
 
               ),
-
               )
             ],
           ),

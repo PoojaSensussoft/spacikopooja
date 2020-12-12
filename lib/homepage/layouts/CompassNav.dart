@@ -98,15 +98,30 @@ class _CompassState extends State<CompassNav> {
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
-  _getCurrentLocation() {
+  // _getCurrentLocation() {
+  //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  //   geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
+  //
+  //     setState(() {
+  //       _currentPosition = position;
+  //       print('LatLong ::::$_currentPosition');
+  //       _lng = LatLng(_currentPosition.latitude, _currentPosition.longitude);
+  //       print('get_latLng::::$_lng');
+  //     });
+  //   }).catchError((e) {
+  //     print(e);
+  //   });
+  // }
+
+  void _getCurrentLocation() async {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
+    geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
+
       setState(() {
         _currentPosition = position;
         print('LatLong ::::$_currentPosition');
         _lng = LatLng(_currentPosition.latitude, _currentPosition.longitude);
+        print('get_latLng::::$_lng');
       });
     }).catchError((e) {
       print(e);
@@ -236,37 +251,31 @@ class _CompassState extends State<CompassNav> {
                   width: MediaQuery.of(context).size.width,
                   color: spacikoColor.Colorwhite,
 
-
                   child: GoogleMap(
-                    initialCameraPosition: CameraPosition(target: LatLng(21.170240, 72.831062), zoom: 8),
+                    initialCameraPosition: CameraPosition(target: LatLng(list[0].lat, list[0].lng), zoom: 3),
                     markers: _markers,
 
-                    onMapCreated: (GoogleMapController controller) {
+                    onMapCreated: (GoogleMapController controller) async {
                       _controller.complete(controller);
 
                       setState(() {
-                        print('set 1::::$isScrollVisible');
-
                         for(int i=0; i<list.length; i++){
                           _markers.add(Marker(markerId: MarkerId(list[i].id),
-                              //icon: pinLocationIcon, position: LatLng(list[i].lat, list[i].lng), infoWindow: InfoWindow(title: list[i].id),
-                              icon: isScrollVisible == true? pinLocationIcon1 : pinLocationIcon, position: LatLng(list[i].lat, list[i].lng), infoWindow: InfoWindow(title: list[i].id),
+                              icon: isScrollVisible == true? pinLocationIcon1 : pinLocationIcon,
+                              position: LatLng(list[i].lat, list[i].lng), infoWindow: InfoWindow(title: list[i].id),
 
                               /*marker click*/
                               onTap: ()  {
                                   setState(() {
-                                    print('SET::::');
                                     _markers.add(Marker(markerId: MarkerId(list[i].id),
                                     icon: pinLocationIcon1, position: LatLng(list[i].lat, list[i].lng),
                                         infoWindow: InfoWindow(title: list[i].id)));
 
                                     isScrollVisible = true;
-
                                       _index = i;
                                       _pageController = new PageController(initialPage: _index,viewportFraction: 0.75, keepPage: true);
 
                                     Future.delayed(Duration(milliseconds: 30), () {
-                                      print('called:::::');
                                       _pageController.animateToPage(_index, curve: Curves.easeInOutSine, duration: Duration(milliseconds: 300));
                                       _pageController?.jumpToPage(_index);
                                     });
@@ -285,8 +294,7 @@ class _CompassState extends State<CompassNav> {
                     },
                   )
                       // : Center(
-                    // child: CircularProgressIndicator(),
-                  // ),
+                    // child: CircularProgressIndicator()),
                 ),
 
 
