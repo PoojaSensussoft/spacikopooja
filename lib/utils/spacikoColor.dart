@@ -9,4 +9,5 @@ class spacikoColor{
   static Color Colorpink = Color(0xfff0476d);
   static Color Colorlihgt_green = Color(0xffE5F5F5);
   static Color ColorBlackLightText = Color(0xff606060);
+  static Color ColorLightChat = Color(0xffD0D1D0);
 }

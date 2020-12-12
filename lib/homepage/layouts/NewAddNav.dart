@@ -48,12 +48,12 @@ class _AddNavState extends State<NewAddNav> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(right: 10, top: 30),
+                  padding: EdgeInsets.only(right: 10, top: 25),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       icon: Icon(Icons.arrow_back_ios_sharp, color: spacikoColor.Colorwhite),
-                      iconSize: 30,
+                      iconSize: 25,
                       onPressed: () {
                         setState(() {
                           if(currentIndex>1){

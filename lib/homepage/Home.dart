@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:spacikopooja/homepage/layouts/NewAddNav.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 import 'layouts/CalenderNav.dart';
-import 'layouts/ChatScreenNav.dart';
+import 'layouts/chatSection/ChatScreenNav.dart';
 import 'layouts/CompassNav.dart';
 import '../utils/CustomBottomNav.dart';
 import 'layouts/UserProfileNav.dart';
-
 
 void main() => runApp(Home());
 
