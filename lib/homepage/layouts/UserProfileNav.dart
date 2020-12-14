@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/chirag/CheckItem.dart';
+import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 void main() => runApp(UserProfile());
@@ -17,15 +19,25 @@ class UserProfile extends StatelessWidget {
 }
 
 class UserProfileNav extends StatefulWidget {
+
+
   @override
   _UserProfileNavState createState() => _UserProfileNavState();
 }
 
 class _UserProfileNavState extends State<UserProfileNav> {
+  String userName;
+
   @override
-  void initState() {
+   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((prefValue) => {
+      setState(() {
+        userName = prefValue.getString(Utility.USER_NAME)?? false;
+      })
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +98,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                           /*user name*/
                           Container(
                             margin: EdgeInsets.only(bottom: 30),
-                            child: Text('Abc Sensussoft', style: TextStyle(fontFamily: 'poppins_regular', fontSize: 16, color: spacikoColor.Colorblack),),
+                            child: Text(userName??'0', style: TextStyle(fontFamily: 'poppins_regular', fontSize: 16, color: spacikoColor.Colorblack),),
                           ),
 
 
@@ -98,9 +110,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                               color: spacikoColor.ColorPrimary,
                               child: Text("My Profile",
                                 style: TextStyle(fontSize: 16, fontFamily: "poppins_semibold", color: spacikoColor.Colorwhite),),
-
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-
                               onPressed: () {
                                 // Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                               },

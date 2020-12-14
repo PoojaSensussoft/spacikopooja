@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1032445707720",
+    "project_id": "spaciko-app",
+    "storage_bucket": "spaciko-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032445707720:android:0e83de1bd9de9d05a52cfd",
+        "android_client_info": {
+          "package_name": "com.example.spacikopooja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1032445707720-itodkjp5kdg1qctnbesk7khh0eslaogl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.spacikopooja",
+            "certificate_hash": "2580b160175f37dd0c6bba2ba6d7bb131928b17b"
+          }
+        },
+        {
+          "client_id": "1032445707720-bjdqhp09poooeqgh9a32qh25koh6or9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGhGo_th5SI7UzD4GhTd7d5ZiGol8IA7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1032445707720-bjdqhp09poooeqgh9a32qh25koh6or9a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1032445707720-6i85c79rojtjh2kb6flmjkvei88e54ig.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.spacikopooja"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

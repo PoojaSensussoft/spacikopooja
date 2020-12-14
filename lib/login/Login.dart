@@ -1,10 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spacikopooja/homepage/Home.dart';
 import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
+import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-
 import '../register/Register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class Login extends StatefulWidget {
   @override
@@ -16,6 +21,26 @@ class _LoginState extends State<Login> {
   TextEditingController email = new TextEditingController();
  TextEditingController password = new TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  SharedPreferences prefs;
+
+
+  @override
+  void initState() {
+    super.initState();
+    main();
+  }
+
+
+  Future<void> main() async {
+    prefs = await SharedPreferences.getInstance();
+    var email = prefs.getString(Utility.USER_EMAIL);
+    print('get_mail::::$email');
+    runApp(MaterialApp(debugShowCheckedModeBanner: false,
+        home: email == null ? Login() : FirstInroScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,9 +208,23 @@ class _LoginState extends State<Login> {
                         child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
                       ),
 
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                        child: Image(image: AssetImage('image/search.png'), height: 40, width: 40,),
+                      GestureDetector(
+                        onTap: () async{
+                          signInWithGoogle().whenComplete(() {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return FirstInroScreen();
+                                },
+                              ),
+                            );
+                          });
+                        },
+
+                        child: Container(
+                          margin: EdgeInsets.only(top: 15),
+                          child: Image(image: AssetImage('image/search.png'), height: 40, width: 40,),
+                        ),
                       ),
                     ],
                   ),
@@ -227,5 +266,34 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+
+
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+
+    print('diaplay_name:::${user.displayName}');
+    print('diaplay_email:::${user.email}');
+    print('diaplay_number:::${user.phoneNumber}');
+
+    prefs.setString(Utility.USER_EMAIL, user.email);
+    prefs.setString(Utility.USER_NAME, user.displayName);
+    return 'signInWithGoogle succeeded: $user';
   }
 }

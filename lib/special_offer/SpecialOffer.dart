@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:spacikopooja/utils/spacikoColor.dart';
 
+import 'ListLayoutScrren.dart';
 
 class SpecialOffer extends StatefulWidget {
   @override
@@ -11,14 +11,19 @@ class SpecialOffer extends StatefulWidget {
 class _SpecialOfferState extends State<SpecialOffer> {
   @override
   Widget build(BuildContext context) {
-    return  Container(
-        child: Column(
-          children: [
-            Container(
-              height: 100,
-            )
-          ],
-        ),
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(left: 10, right: 10),
+
+      child: ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          scrollDirection: Axis.vertical,
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return ListLayoutScreen();
+
+          }),
     );
   }
 }
