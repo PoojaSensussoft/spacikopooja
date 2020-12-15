@@ -209,17 +209,11 @@ class _LoginState extends State<Login> {
                       ),
 
                       GestureDetector(
-                        onTap: () async{
-                          signInWithGoogle().whenComplete(() {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return FirstInroScreen();
-                                },
-                              ),
-                            );
-                          });
-                        },
+                        // onTap: () async{
+                        //   signInWithGoogle();
+                        // },
+
+                        onTap: signIn,
 
                         child: Container(
                           margin: EdgeInsets.only(top: 15),
@@ -267,33 +261,69 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+  
+  // Future<String> signInWithGoogle() async {
+  //   final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+  //   final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+  //
+  //   final AuthCredential credential = GoogleAuthProvider.getCredential(
+  //     accessToken: googleSignInAuthentication.accessToken,
+  //     idToken: googleSignInAuthentication.idToken,
+  //   );
+  //
+  //   final AuthResult authResult = await _auth.signInWithCredential(credential);
+  //   final FirebaseUser user = authResult.user;
+  //
+  //   assert(!user.isAnonymous);
+  //   assert(await user.getIdToken() != null);
+  //
+  //   final FirebaseUser currentUser = await _auth.currentUser();
+  //   assert(user.uid == currentUser.uid);
+  //
+  //   print('diaplay_name:::${user.displayName}');
+  //   print('diaplay_email:::${user.email}');
+  //   print('diaplay_number:::${user.phoneNumber}');
+  //
+  //   prefs.setString(Utility.USER_EMAIL, user.email);
+  //   prefs.setString(Utility.USER_NAME, user.displayName);
+  //
+  //   if(user!=null){
+  //     Navigator.of(context).push(
+  //         MaterialPageRoute(
+  //           builder: (context) {
+  //             return FirstInroScreen();
+  //           },
+  //         ),
+  //       );
+  //   }
+  //   return 'signInWithGoogle succeeded: $user';
+  // }
 
+  Future signIn() async {
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
-  Future<String> signInWithGoogle() async {
-    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+    await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
 
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
+    final FirebaseUser user = (await _auth.signInWithCredential(credential)) as FirebaseUser;
+    setState(() {
+      String name = user.displayName;
+      prefs.setString(Utility.USER_EMAIL, user.email);
+        prefs.setString(Utility.USER_NAME, user.displayName);
 
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
+      print('diaplay_name:::${user.displayName}');
+      print('diaplay_email:::${user.email}');
 
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
-
-    print('diaplay_name:::${user.displayName}');
-    print('diaplay_email:::${user.email}');
-    print('diaplay_number:::${user.phoneNumber}');
-
-    prefs.setString(Utility.USER_EMAIL, user.email);
-    prefs.setString(Utility.USER_NAME, user.displayName);
-    return 'signInWithGoogle succeeded: $user';
+      if(user!=null){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+      }
+    });
   }
 }

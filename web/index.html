@@ -22,22 +22,31 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="spacikopooja">
 
-  <meta name="google-signin-client_id" content="746762319039-5l7bk6murrbjvm6oluqrnm8ro6rraeia.apps.googleusercontent.com">
-
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>spacikopooja</title>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_Sso_0edwfC1dde6Xnx_JkTgjM2sDh7s"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_Sso_0edwfC1dde6Xnx_JkTgjM2sDh7s"></script>
   <link rel="manifest" href="manifest.json">
+
+  <!--<meta name="google-signin-scope" content="profile email">-->
+
+  <!--<meta name="google-signin-client_id" content="746762319039-m8a4322mnoqscmfd26lv73nkiql6uf5r.apps.googleusercontent.com">-->
+  <meta name="google-signin-client_id" content="1032445707720-bjdqhp09poooeqgh9a32qh25koh6or9a.apps.googleusercontent.com">
+
 
 </head>
 <body>
-  <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
+<!--   This script installs service_worker.js to provide PWA functionality to-->
+<!--       application. For more information, see:-->
+<!--       https://developers.google.com/web/fundamentals/primers/service-workers-->
+
+   <!-- This script installs service_worker.js to provide PWA functionality to
+      application. For more information, see:
+      https://developers.google.com/web/fundamentals/primers/service-workers -->
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('flutter-first-frame', function () {
@@ -46,32 +55,33 @@
     }
   </script>
 
-
-
-
   <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+  <!--<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>-->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
 
   <!-- TODO: Add SDKs for Firebase products that you want to use
-       https://firebase.google.com/docs/web/setup#available-libraries -->
-  <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
+   https://firebase.google.com/docs/web/setup#available-libraries -->
 
-  <script>
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  var firebaseConfig = {
-    apiKey: "AIzaSyD3STgPVIM7wl1ISOFG0FLwswaM7XfNgVI",
-    authDomain: "spaciko-app.firebaseapp.com",
-    projectId: "spaciko-app",
-    storageBucket: "spaciko-app.appspot.com",
-    messagingSenderId: "1032445707720",
-    appId: "1:1032445707720:web:14e6d4ed5659f2d5a52cfd",
-    measurementId: "G-ZQEK32YHD8"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script>
+   <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-auth.js"></script>
+   <!-- Initialize Firebase -->
+   <!--<script src="/__/firebase/init.js"></script>-->
+
+   <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyD3STgPVIM7wl1ISOFG0FLwswaM7XfNgVI",
+        authDomain: "spaciko-app.firebaseapp.com",
+        projectId: "spaciko-app",
+        storageBucket: "spaciko-app.appspot.com",
+        messagingSenderId: "1032445707720",
+        appId: "1:1032445707720:web:07c92820a6a3a801a52cfd",
+        measurementId: "G-F7HDGVFBC0"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+   </script>
 
   <script src="main.dart.js" type="application/javascript"></script>
 </body>
