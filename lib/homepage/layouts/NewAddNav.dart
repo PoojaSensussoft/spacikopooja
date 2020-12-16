@@ -150,7 +150,7 @@ class _AddNavState extends State<NewAddNav> {
 
   Widget _setLayout() {
     if (currentIndex == 1) {
-        return FirstStep(2, onChangeFunction: (val) => setState(() => currentIndex = val));
+        return SevenStep(2, onChangeFunction: (val) => setState(() => currentIndex = val));
 
       } else if (currentIndex == 2) {
       return SecondStep(3, onChangeFunction: (val) => setState(() => currentIndex = val));

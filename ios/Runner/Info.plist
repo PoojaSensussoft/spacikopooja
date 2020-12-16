@@ -72,5 +72,34 @@
     		</array>
     	</dict>
     </array>
+
+
+
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>fb303240047681969</string>
+  </array>
+  </dict>
+</array>
+<key>FacebookAppID</key>
+<string>303240047681969</string>
+<key>FacebookDisplayName</key>
+<string>Pooja Spaciko</string>
+
+
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>fbapi</string>
+  <string>fbauth</string>
+  <string>fb-messenger-share-api</string>
+  <string>fbauth2</string>
+  <string>fbshareextension</string>
+</array>
+
+
+
 </dict>
 </plist>

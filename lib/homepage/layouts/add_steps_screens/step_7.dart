@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -18,7 +17,7 @@ class SevenStep extends StatefulWidget {
 
 class _SevenStepState extends State<SevenStep> {
   TextEditingController comemnt = new TextEditingController();
-  File _image;
+  // File _image;
   List<Asset> imageList = new List();
   bool isVisible;
 
@@ -57,6 +56,7 @@ class _SevenStepState extends State<SevenStep> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GestureDetector(
+                // onTap: loadAssets,
                 onTap: loadAssets,
 
                 child: Container(
@@ -140,7 +140,6 @@ class _SevenStepState extends State<SevenStep> {
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               labelStyle: TextStyle(fontSize: 16, fontFamily: "poppins_regular"),
-
             ),
           ),
         ),
@@ -180,6 +179,7 @@ class _SevenStepState extends State<SevenStep> {
     });
   }
 
+
   Widget buildGridView() {
     return GridView.count(
       shrinkWrap: true,
@@ -190,11 +190,7 @@ class _SevenStepState extends State<SevenStep> {
         Asset asset = imageList[index];
         return Stack(
           children: [
-            AssetThumb(
-              asset: asset,
-              width: 55,
-              height: 55,
-            ),
+            AssetThumb(asset: asset, width: 55, height: 55),
 
             Container(
               width: 55,
@@ -221,5 +217,33 @@ class _SevenStepState extends State<SevenStep> {
       }),
     );
   }
+
+
+
+  // startFilePicker() async {
+  //   InputElement uploadInput = FileUploadInputElement();
+  //   uploadInput.multiple = true;
+  //   uploadInput.click();
+  //
+  //   uploadInput.onChange.listen((e) {
+  //     final files = uploadInput.files;
+  //     if (files.length == 1) {
+  //       final file = files[0];
+  //       final reader = FileReader();
+  //
+  //       reader.onLoadEnd.listen((e) {
+  //         _handleResult(reader.result);
+  //       });
+  //       reader.readAsDataUrl(file);
+  //     }
+  //   });
+  // }
+  //
+  // void _handleResult(Object result) {
+  //   setState(() {
+  //     imageList.add(result);
+  //   });
+  // }
+
 
 }

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:spacikopooja/homepage/Home.dart';
 import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
@@ -9,6 +12,7 @@ import 'package:spacikopooja/utils/spacikoColor.dart';
 import '../register/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 
 
 class Login extends StatefulWidget {
@@ -24,7 +28,34 @@ class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  // final facebookLogin = FacebookLogin();
+  Map userProfile;
+
   SharedPreferences prefs;
+
+  // loginWithFB() async{
+  //   final result = await facebookLogin.logInWithReadPermissions(['email']);
+  //
+  //   switch (result.status) {
+  //     case FacebookLoginStatus.loggedIn:
+  //       final token = result.accessToken.token;
+  //       final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token');
+  //       final profile = JSON.jsonDecode(graphResponse.body);
+  //       print(profile);
+  //       setState(() {
+  //         userProfile = profile;
+  //       });
+  //       break;
+  //
+  //     case FacebookLoginStatus.cancelledByUser:
+  //       // setState(() => _isLoggedIn = false );
+  //       break;
+  //     case FacebookLoginStatus.error:
+  //       // setState(() => _isLoggedIn = false );
+  //       break;
+  //   }
+  //
+  // }
 
 
   @override
@@ -203,17 +234,23 @@ class _LoginState extends State<Login> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 15, right: 20),
-                        child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
+
+                      /*facebook*/
+                      GestureDetector(
+                        onTap: (){
+                          initiateFacebookLogin();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 15, right: 20),
+                          child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
+                        ),
                       ),
 
+                      /*google login*/
                       GestureDetector(
-                        // onTap: () async{
-                        //   signInWithGoogle();
-                        // },
-
-                        onTap: signIn,
+                        onTap: () async{
+                          signInWithGoogle();
+                        },
 
                         child: Container(
                           margin: EdgeInsets.only(top: 15),
@@ -261,69 +298,63 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-  
-  // Future<String> signInWithGoogle() async {
-  //   final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
-  //   final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-  //
-  //   final AuthCredential credential = GoogleAuthProvider.getCredential(
-  //     accessToken: googleSignInAuthentication.accessToken,
-  //     idToken: googleSignInAuthentication.idToken,
-  //   );
-  //
-  //   final AuthResult authResult = await _auth.signInWithCredential(credential);
-  //   final FirebaseUser user = authResult.user;
-  //
-  //   assert(!user.isAnonymous);
-  //   assert(await user.getIdToken() != null);
-  //
-  //   final FirebaseUser currentUser = await _auth.currentUser();
-  //   assert(user.uid == currentUser.uid);
-  //
-  //   print('diaplay_name:::${user.displayName}');
-  //   print('diaplay_email:::${user.email}');
-  //   print('diaplay_number:::${user.phoneNumber}');
-  //
-  //   prefs.setString(Utility.USER_EMAIL, user.email);
-  //   prefs.setString(Utility.USER_NAME, user.displayName);
-  //
-  //   if(user!=null){
-  //     Navigator.of(context).push(
-  //         MaterialPageRoute(
-  //           builder: (context) {
-  //             return FirstInroScreen();
-  //           },
-  //         ),
-  //       );
-  //   }
-  //   return 'signInWithGoogle succeeded: $user';
-  // }
 
-  Future signIn() async {
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+  void initiateFacebookLogin() async {
+    var facebookLogin = FacebookLogin();
+    var facebookLoginResult =
+    await facebookLogin.logInWithReadPermissions(['email']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Error");
+        // onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("CancelledByUser");
+        // onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn");
+        var graphResponse = await http.get(
+            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${facebookLoginResult.accessToken.token}');
+
+        var profile = json.decode(graphResponse.body);
+        print('FB_LOGIN::::${profile.toString()}');
+
+        // onLoginStatusChanged(true);
+        break;
+    }
+  }
+
+
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
     );
 
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)) as FirebaseUser;
-    setState(() {
-      String name = user.displayName;
-      prefs.setString(Utility.USER_EMAIL, user.email);
-        prefs.setString(Utility.USER_NAME, user.displayName);
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
 
-      print('diaplay_name:::${user.displayName}');
-      print('diaplay_email:::${user.email}');
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
 
-      if(user!=null){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
-      }
-    });
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+
+    print('diaplay_name:::${user.displayName}');
+    print('diaplay_email:::${user.email}');
+    print('diaplay_number:::${user.phoneNumber}');
+
+    prefs.setString(Utility.USER_EMAIL, user.email);
+    prefs.setString(Utility.USER_NAME, user.displayName);
+
+    if(user!=null){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+    }
+    return 'signInWithGoogle succeeded: $user';
   }
 }
