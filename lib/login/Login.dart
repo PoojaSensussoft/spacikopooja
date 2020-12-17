@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
@@ -12,7 +12,10 @@ import 'package:spacikopooja/utils/spacikoColor.dart';
 import '../register/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert' as JSON;
+
 
 
 class Login extends StatefulWidget {
@@ -28,11 +31,22 @@ class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // final facebookLogin = FacebookLogin();
-  Map userProfile;
-
   SharedPreferences prefs;
 
+  Map<String, dynamic> _userData;
+  AccessToken _accessToken;
+
+  String prettyPrint(Map json) {
+    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    String pretty = encoder.convert(json);
+    return pretty;
+  }
+
+
+  // Map userProfile;
+  // final facebookLogin = FacebookLogin();
+  //
+  //
   // loginWithFB() async{
   //   final result = await facebookLogin.logInWithReadPermissions(['email']);
   //
@@ -42,26 +56,95 @@ class _LoginState extends State<Login> {
   //       final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token');
   //       final profile = JSON.jsonDecode(graphResponse.body);
   //       print(profile);
+  //
   //       setState(() {
   //         userProfile = profile;
+  //         print('SUCC:::::$userProfile');
   //       });
   //       break;
   //
   //     case FacebookLoginStatus.cancelledByUser:
-  //       // setState(() => _isLoggedIn = false );
+  //      print('CANCELL:::');
   //       break;
   //     case FacebookLoginStatus.error:
-  //       // setState(() => _isLoggedIn = false );
+  //       print('ERROR:::::');
   //       break;
   //   }
   //
   // }
 
 
+
   @override
   void initState() {
     super.initState();
     main();
+  }
+
+
+  Future<void> _login() async {
+    try {
+      _accessToken = await FacebookAuth.instance.login();
+
+      _printCredentials(_accessToken);
+
+      final userData = await FacebookAuth.instance.getUserData();
+      _userData = userData;
+      _checkIfIsLogged();
+
+    } on FacebookAuthException catch (e) {
+      print('CATCH:::::${e.message}');
+
+      switch (e.errorCode) {
+        case FacebookAuthErrorCode.OPERATION_IN_PROGRESS:
+          print("You have a previous login operation in progress");
+          break;
+        case FacebookAuthErrorCode.CANCELLED:
+          print("login cancelled");
+          break;
+        case FacebookAuthErrorCode.FAILED:
+          print("login failed");
+          break;
+      }
+
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+  }
+
+
+  Future<void> _checkIfIsLogged() async {
+    final AccessToken accessToken = await FacebookAuth.instance.isLogged;
+
+    if (accessToken != null) {
+      print("is Logged:::: ${prettyPrint(accessToken.toJson())}");
+      final userData = await FacebookAuth.instance.getUserData();
+
+      print('get_all_data::::::$userData');
+
+      _accessToken = accessToken;
+
+      final userData1 = await FacebookAuth.instance.getUserData(fields: "gender,email,birthday,friends,link,name,picture");
+      print('get_all_data:11:::::$userData1');
+
+      if(userData!=null){
+        // prefs.setString(Utility.USER_EMAIL, userData);
+        // prefs.setString(Utility.USER_NAME, user.displayName);
+
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+
+      }
+
+      setState(() {
+        _userData = userData;
+      });
+    }
+  }
+
+  void _printCredentials(AccessToken accessToken) {
+    print(prettyPrint(_accessToken.toJson()));
+
   }
 
 
@@ -72,6 +155,7 @@ class _LoginState extends State<Login> {
     runApp(MaterialApp(debugShowCheckedModeBanner: false,
         home: email == null ? Login() : FirstInroScreen()));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -237,9 +321,15 @@ class _LoginState extends State<Login> {
 
                       /*facebook*/
                       GestureDetector(
+                        // onTap: (){
+                        //   initiateFacebookLogin();
+                        // },
+
                         onTap: (){
-                          initiateFacebookLogin();
-                        },
+                          _login();
+                          },
+
+
                         child: Container(
                           margin: EdgeInsets.only(top: 15, right: 20),
                           child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
@@ -297,33 +387,6 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-
-  void initiateFacebookLogin() async {
-    var facebookLogin = FacebookLogin();
-    var facebookLoginResult =
-    await facebookLogin.logInWithReadPermissions(['email']);
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        print("Error");
-        // onLoginStatusChanged(false);
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        print("CancelledByUser");
-        // onLoginStatusChanged(false);
-        break;
-      case FacebookLoginStatus.loggedIn:
-        print("LoggedIn");
-        var graphResponse = await http.get(
-            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${facebookLoginResult.accessToken.token}');
-
-        var profile = json.decode(graphResponse.body);
-        print('FB_LOGIN::::${profile.toString()}');
-
-        // onLoginStatusChanged(true);
-        break;
-    }
   }
 
 
