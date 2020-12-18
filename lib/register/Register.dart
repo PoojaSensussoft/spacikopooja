@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/database/data/users.dart';
+import 'package:spacikopooja/database/data/usersProvider.dart';
 import 'package:spacikopooja/login/Login.dart';
 import 'package:spacikopooja/terms_cond/TermsAndcond.dart';
+import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-
 import '../introscreen/FirstIntroScreen.dart';
+
 
 class Register extends StatefulWidget {
   String email;
@@ -26,6 +29,15 @@ class _RegisterState extends State<Register> {
 
   String get_email;
   String get_password;
+  var _usersProvider = UsersProvider();
+
+  TextEditingController controllerfname = TextEditingController();
+  TextEditingController controllerlname = TextEditingController();
+  TextEditingController controlleremail = TextEditingController();
+  TextEditingController controllerpassword = TextEditingController();
+  String isCheck = "true";
+  String login_with = "email";
+
 
   _RegisterState(String email, String password) {
     this.get_email = email;
@@ -299,7 +311,8 @@ class _RegisterState extends State<Register> {
 
                       onPressed: () {
                         if(_formKey.currentState.validate()){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
+                          addUser();
                         }
                       },
                     ),
@@ -361,6 +374,45 @@ class _RegisterState extends State<Register> {
           ),
         ),
       ),
+    );
+  }
+
+
+  addUser(){
+    // _usersProvider.insert(DatabaseClass(f_name: controllerfname.text, l_name: controllerlname.text, email: controlleremail.text,
+    //     password: controllerpassword.text, isCheck: isCheck, loginWith: login_with)).then(
+    //       (value) {
+    //         controllerfname.text = "";
+    //         controllerlname.text = "";
+    //         controlleremail.text = "";
+    //         controllerpassword.text = "";
+    //
+    //     Utility.showToast('User was created successfully');
+    //     Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
+    //   },
+    //
+    // ).catchError(
+    //       (error) {
+    //         Utility.showToast('error while creating user: ' + error.toString());
+    //   },
+    // );
+
+    _usersProvider.insert(Users(name: controllerfname.text, email: controlleremail.text)).then(
+          (value) {
+            controllerfname.text = "";
+            controlleremail.text = "";
+
+        final snackBar = SnackBar(
+          content: Text('User was created successfully'),
+          backgroundColor: Colors.black,
+        );
+            Utility.showToast('User was created successfully');
+      },
+
+    ).catchError(
+          (error) {
+            Utility.showToast('error while creating user: ' + error.toString());
+      },
     );
   }
 }

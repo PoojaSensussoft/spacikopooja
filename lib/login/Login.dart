@@ -1,7 +1,8 @@
 import 'dart:convert';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,9 +14,6 @@ import '../register/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as JSON;
-
 
 
 class Login extends StatefulWidget {
@@ -36,6 +34,13 @@ class _LoginState extends State<Login> {
   Map<String, dynamic> _userData;
   AccessToken _accessToken;
 
+  String _homeScreenText = "Waiting for token...";
+  String _messageText = "Waiting for message...";
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+
+
+
   String prettyPrint(Map json) {
     JsonEncoder encoder = new JsonEncoder.withIndent('  ');
     String pretty = encoder.convert(json);
@@ -43,42 +48,45 @@ class _LoginState extends State<Login> {
   }
 
 
-  // Map userProfile;
-  // final facebookLogin = FacebookLogin();
-  //
-  //
-  // loginWithFB() async{
-  //   final result = await facebookLogin.logInWithReadPermissions(['email']);
-  //
-  //   switch (result.status) {
-  //     case FacebookLoginStatus.loggedIn:
-  //       final token = result.accessToken.token;
-  //       final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token');
-  //       final profile = JSON.jsonDecode(graphResponse.body);
-  //       print(profile);
-  //
-  //       setState(() {
-  //         userProfile = profile;
-  //         print('SUCC:::::$userProfile');
-  //       });
-  //       break;
-  //
-  //     case FacebookLoginStatus.cancelledByUser:
-  //      print('CANCELL:::');
-  //       break;
-  //     case FacebookLoginStatus.error:
-  //       print('ERROR:::::');
-  //       break;
-  //   }
-  //
-  // }
-
-
-
   @override
   void initState() {
     super.initState();
     main();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        setState(() {
+          _messageText = "Push Messaging message: $message";
+        });
+        print("onMessage: $message");
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        setState(() {
+          _messageText = "Push Messaging message: $message";
+        });
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        setState(() {
+          _messageText = "Push Messaging message: $message";
+        });
+        print("onResume: $message");
+      },
+    );
+
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+    _firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      setState(() {
+        _homeScreenText = "Push Messaging token: $token";
+      });
+      print(_homeScreenText);
+    });
   }
 
 
@@ -129,11 +137,9 @@ class _LoginState extends State<Login> {
       print('get_all_data:11:::::$userData1');
 
       if(userData!=null){
-        // prefs.setString(Utility.USER_EMAIL, userData);
-        // prefs.setString(Utility.USER_NAME, user.displayName);
-
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
-
+        print('get_image:::${userData1['picture']}');
+        print('get_image1:::${userData1['picture']}');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
       }
 
       setState(() {
@@ -144,7 +150,6 @@ class _LoginState extends State<Login> {
 
   void _printCredentials(AccessToken accessToken) {
     print(prettyPrint(_accessToken.toJson()));
-
   }
 
 
@@ -328,7 +333,6 @@ class _LoginState extends State<Login> {
                         onTap: (){
                           _login();
                           },
-
 
                         child: Container(
                           margin: EdgeInsets.only(top: 15, right: 20),

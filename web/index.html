@@ -21,7 +21,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="spacikopooja">
-
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -29,6 +28,7 @@
 
   <title>spacikopooja</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_Sso_0edwfC1dde6Xnx_JkTgjM2sDh7s"></script>
+
   <link rel="manifest" href="manifest.json">
 
   <!--<meta name="google-signin-scope" content="profile email">-->
@@ -36,8 +36,8 @@
   <!--<meta name="google-signin-client_id" content="746762319039-m8a4322mnoqscmfd26lv73nkiql6uf5r.apps.googleusercontent.com">-->
   <meta name="google-signin-client_id" content="1032445707720-bjdqhp09poooeqgh9a32qh25koh6or9a.apps.googleusercontent.com">
 
-
 </head>
+
 <body>
 <!--   This script installs service_worker.js to provide PWA functionality to-->
 <!--       application. For more information, see:-->
@@ -82,6 +82,30 @@
       firebase.initializeApp(firebaseConfig);
       firebase.analytics();
    </script>
+
+
+<script>
+      var FACEBOOK_APP_ID = "303240047681969";
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: FACEBOOK_APP_ID,
+          cookie: true,
+          xfbml: true,
+          version: "v9.0",
+        });
+        FB.AppEvents.logPageView();
+      };
+    </script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script src="flutter_facebook_auth.js" type="application/javascript"></script>
+<script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("flutter-first-frame", function () {
+          navigator.serviceWorker.register("flutter_service_worker.js");
+        });
+      }
+    </script>
+
 
   <script src="main.dart.js" type="application/javascript"></script>
 </body>
