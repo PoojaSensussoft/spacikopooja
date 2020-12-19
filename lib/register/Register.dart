@@ -1,13 +1,18 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:spacikopooja/database/data/users.dart';
-import 'package:spacikopooja/database/data/usersProvider.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spacikopooja/Database/database_helper.dart';
+import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
 import 'package:spacikopooja/login/Login.dart';
 import 'package:spacikopooja/terms_cond/TermsAndcond.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-import '../introscreen/FirstIntroScreen.dart';
 
 
 class Register extends StatefulWidget {
@@ -20,28 +25,116 @@ class Register extends StatefulWidget {
   }
 
   @override
-  _RegisterState createState() => _RegisterState(email, password);
+  _RegisterState createState() => _RegisterState();
 }
+
 
 class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   bool checkboxValue = false;
 
-  String get_email;
-  String get_password;
-  var _usersProvider = UsersProvider();
-
   TextEditingController controllerfname = TextEditingController();
   TextEditingController controllerlname = TextEditingController();
   TextEditingController controlleremail = TextEditingController();
   TextEditingController controllerpassword = TextEditingController();
-  String isCheck = "true";
-  String login_with = "email";
+
+  String isCheck = "false";
+  String login_with = "";
+  final dbHelper = DatabaseHelper.instance;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  String google_user_name;
+  String google_email;
+  String google_id;
+
+  // SharedPreferences prefs;
+
+  Map<String, dynamic> _userData;
+  AccessToken _accessToken;
 
 
-  _RegisterState(String email, String password) {
-    this.get_email = email;
-    this.get_password = password;
+  String prettyPrint(Map json) {
+    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    String pretty = encoder.convert(json);
+    return pretty;
+  }
+
+  Future<void> _login() async {
+    try {
+      _accessToken = await FacebookAuth.instance.login();
+
+      _printCredentials(_accessToken);
+
+      final userData = await FacebookAuth.instance.getUserData();
+      _userData = userData;
+      _checkIfIsLogged();
+
+    } on FacebookAuthException catch (e) {
+      print('CATCH:::::${e.message}');
+
+      switch (e.errorCode) {
+        case FacebookAuthErrorCode.OPERATION_IN_PROGRESS:
+          print("You have a previous login operation in progress");
+          break;
+        case FacebookAuthErrorCode.CANCELLED:
+          print("login cancelled");
+          break;
+        case FacebookAuthErrorCode.FAILED:
+          print("login failed");
+          break;
+      }
+
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+  }
+
+
+  Future<void> _checkIfIsLogged() async {
+    final AccessToken accessToken = await FacebookAuth.instance.isLogged;
+
+    if (accessToken != null) {
+      print("is Logged:::: ${prettyPrint(accessToken.toJson())}");
+      final userData = await FacebookAuth.instance.getUserData();
+
+      print('get_all_data::::::$userData');
+
+      _accessToken = accessToken;
+
+      final userData1 = await FacebookAuth.instance.getUserData(fields: "gender,email,birthday,friends,link,name,picture");
+      print('get_all_data:11:::::$userData1');
+
+      if(userData!=null){
+        print('get_image:::${userData1['picture']}');
+        print('get_image1:::${userData1['picture']}');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+      }
+
+      setState(() {
+        _userData = userData;
+      });
+    }
+  }
+
+  void _printCredentials(AccessToken accessToken) {
+    print(prettyPrint(_accessToken.toJson()));
+  }
+
+
+  // @override
+  // Future<void> initState() async {
+  //   // prefs = await SharedPreferences.getInstance();
+  //   _query();
+  //   super.initState();
+  // }
+
+
+ @override
+  void initState() {
+   _query();
+    super.initState();
   }
 
   @override
@@ -102,7 +195,7 @@ class _RegisterState extends State<Register> {
                             ),
 
                             child: TextFormField(
-                              //controller: email,
+                              controller: controllerfname,
                               cursorColor: spacikoColor.ColorPrimary,
                               keyboardType: TextInputType.text,
 
@@ -115,7 +208,8 @@ class _RegisterState extends State<Register> {
                                     borderSide: BorderSide(color: spacikoColor.ColorPrimary)),
 
                                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25),
-                                    borderSide: BorderSide(color: spacikoColor.ColorPrimary)),
+                                    borderSide: BorderSide(color: spacikoColor.ColorPrimary)
+                                ),
                               ),
 
                               validator: (text) {
@@ -134,13 +228,14 @@ class _RegisterState extends State<Register> {
                         /*last name*/
                         Flexible(
                           child: Container(margin: EdgeInsets.only(top: 35,left: 7,right: 20),
-                          child: Theme(
+                            child: Theme(
                             data: new ThemeData(
                               primaryColor: spacikoColor.ColorPrimary,
                               primaryColorDark: spacikoColor.ColorPrimary,
                             ),
 
                             child: TextFormField(
+                              controller: controllerlname,
                               cursorColor: spacikoColor.ColorPrimary,
                               keyboardType: TextInputType.text,
 
@@ -182,11 +277,15 @@ class _RegisterState extends State<Register> {
                       ),
 
                       child: TextFormField(
-                        initialValue: get_email,
+                        initialValue: widget.email,
                         cursorColor: spacikoColor.ColorPrimary,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
 
+                        onChanged: (text){
+                          controlleremail.text = text;
+                        },
+
+                        decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(left: 20),
                           labelText: "Email",
                           labelStyle: TextStyle(fontSize: 16, fontFamily: "poppins_regular"),
@@ -221,12 +320,16 @@ class _RegisterState extends State<Register> {
                       ),
 
                       child: TextFormField(
-                        initialValue: get_password,
+                        onChanged: (text){
+                          controllerpassword.text = text;
+                        },
+
+                        initialValue: widget.password,
                         obscureText: true,
                         cursorColor: spacikoColor.ColorPrimary,
                         keyboardType: TextInputType.visiblePassword,
-                        decoration: InputDecoration(
 
+                        decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(left: 20),
                           labelText: "Password",
                           labelStyle: TextStyle(fontSize: 16, fontFamily: "poppins_regular"),
@@ -236,7 +339,6 @@ class _RegisterState extends State<Register> {
 
                           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25),
                               borderSide: BorderSide(color: spacikoColor.ColorPrimary)),
-
                         ),
 
                         validator: (text) {
@@ -261,11 +363,13 @@ class _RegisterState extends State<Register> {
                           onTap: () {
                             setState(() {
                               checkboxValue = !checkboxValue;
+                              checkboxValue? isCheck = "true": isCheck = "false";
                             });
                           },
                           child: checkboxValue ? Icon(Icons.radio_button_checked, color: spacikoColor.ColorPrimary, size: 25,)
                               : Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 25,),
                         ),
+
                         SizedBox(width: 10),
 
                         Expanded(
@@ -312,7 +416,8 @@ class _RegisterState extends State<Register> {
                       onPressed: () {
                         if(_formKey.currentState.validate()){
                           // Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
-                          addUser();
+                          login_with = "email";
+                          _insert();
                         }
                       },
                     ),
@@ -329,14 +434,27 @@ class _RegisterState extends State<Register> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top: 15, right: 20),
-                          child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
+                        GestureDetector(
+                          onTap: (){
+                            login_with = "facebook";
+                            _login();
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(top: 15, right: 20),
+                            child: Image(image: AssetImage('image/facebook.png'), height: 45, width: 45,),
+                          ),
                         ),
 
-                        Container(
-                          margin: EdgeInsets.only(top: 15),
-                          child: Image(image: AssetImage('image/search.png'), height: 40, width: 40,),
+                        GestureDetector(
+                          onTap: (){
+                            login_with = "gmail";
+                            signInWithGoogle();
+                          },
+
+                          child: Container(
+                            margin: EdgeInsets.only(top: 15),
+                            child: Image(image: AssetImage('image/search.png'), height: 40, width: 40,),
+                          ),
                         ),
                       ],
                     ),
@@ -378,41 +496,66 @@ class _RegisterState extends State<Register> {
   }
 
 
-  addUser(){
-    // _usersProvider.insert(DatabaseClass(f_name: controllerfname.text, l_name: controllerlname.text, email: controlleremail.text,
-    //     password: controllerpassword.text, isCheck: isCheck, loginWith: login_with)).then(
-    //       (value) {
-    //         controllerfname.text = "";
-    //         controllerlname.text = "";
-    //         controlleremail.text = "";
-    //         controllerpassword.text = "";
-    //
-    //     Utility.showToast('User was created successfully');
-    //     Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
-    //   },
-    //
-    // ).catchError(
-    //       (error) {
-    //         Utility.showToast('error while creating user: ' + error.toString());
-    //   },
-    // );
+  void _insert() async {
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnFName : controllerfname.text,
+      DatabaseHelper.columnLName  : controllerlname.text,
+      DatabaseHelper.columnEmail : controlleremail.text,
+      DatabaseHelper.columnPassword : controllerpassword.text,
+      DatabaseHelper.columnIscheck : isCheck,
+      DatabaseHelper.columnLoginwith : login_with,
+    };
 
-    _usersProvider.insert(Users(name: controllerfname.text, email: controlleremail.text)).then(
-          (value) {
-            controllerfname.text = "";
-            controlleremail.text = "";
-
-        final snackBar = SnackBar(
-          content: Text('User was created successfully'),
-          backgroundColor: Colors.black,
-        );
-            Utility.showToast('User was created successfully');
-      },
-
-    ).catchError(
-          (error) {
-            Utility.showToast('error while creating user: ' + error.toString());
-      },
-    );
+    final id = await dbHelper.insert(row);
+    print('inserted row id: $id');
   }
+
+  void _query() async{
+      final allRow = await dbHelper.queryAllRows();
+      print('all_rows::::$allRow');
+
+      allRow.forEach((element) {
+        print(element);
+        print('row age is ${element[DatabaseHelper.columnEmail]}');
+        return null;
+      });
+  }
+
+
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+
+    print('diaplay_name:::${user.displayName}');
+    print('diaplay_email:::${user.email}');
+    print('diaplay_number:::${user.uid}');
+
+    // google_user_name = user.displayName;
+    // google_email = user.email;
+    // google_id = user.uid;
+
+    // prefs.setString(Utility.USER_EMAIL, user.email);
+    // prefs.setString(Utility.USER_NAME, user.displayName);
+
+    if(user!=null){
+      // Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+      // print('google_name::::::$google_user_name');
+    }
+    return 'signInWithGoogle succeeded: $user';
+  }
+
 }

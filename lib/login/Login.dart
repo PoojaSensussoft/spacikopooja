@@ -39,8 +39,6 @@ class _LoginState extends State<Login> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 
-
-
   String prettyPrint(Map json) {
     JsonEncoder encoder = new JsonEncoder.withIndent('  ');
     String pretty = encoder.convert(json);

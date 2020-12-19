@@ -67,7 +67,7 @@ dependencies:
 
   # Sqllite database
   sqflite: ^1.3.0
-  path_provider: any
+  path_provider: ^1.6.5
 
 
 
