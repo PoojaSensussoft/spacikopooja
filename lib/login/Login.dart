@@ -6,10 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spacikopooja/Database/database_helper.dart';
 import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
+import 'package:sqflite/sqflite.dart';
 import '../register/Register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -38,18 +40,17 @@ class _LoginState extends State<Login> {
   String _messageText = "Waiting for message...";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-
-  String prettyPrint(Map json) {
-    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-    String pretty = encoder.convert(json);
-    return pretty;
-  }
+  final dbHelper = DatabaseHelper.instance;
+  Database db;
+  String isCheck = "false";
+  String login_with = "";
 
 
   @override
   void initState() {
     super.initState();
-    main();
+    dbInit();
+    // main();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -88,66 +89,8 @@ class _LoginState extends State<Login> {
   }
 
 
-  Future<void> _login() async {
-    try {
-      _accessToken = await FacebookAuth.instance.login();
-
-      _printCredentials(_accessToken);
-
-      final userData = await FacebookAuth.instance.getUserData();
-      _userData = userData;
-      _checkIfIsLogged();
-
-    } on FacebookAuthException catch (e) {
-      print('CATCH:::::${e.message}');
-
-      switch (e.errorCode) {
-        case FacebookAuthErrorCode.OPERATION_IN_PROGRESS:
-          print("You have a previous login operation in progress");
-          break;
-        case FacebookAuthErrorCode.CANCELLED:
-          print("login cancelled");
-          break;
-        case FacebookAuthErrorCode.FAILED:
-          print("login failed");
-          break;
-      }
-
-    } catch (e, s) {
-      print(e);
-      print(s);
-    }
-  }
-
-
-  Future<void> _checkIfIsLogged() async {
-    final AccessToken accessToken = await FacebookAuth.instance.isLogged;
-
-    if (accessToken != null) {
-      print("is Logged:::: ${prettyPrint(accessToken.toJson())}");
-      final userData = await FacebookAuth.instance.getUserData();
-
-      print('get_all_data::::::$userData');
-
-      _accessToken = accessToken;
-
-      final userData1 = await FacebookAuth.instance.getUserData(fields: "gender,email,birthday,friends,link,name,picture");
-      print('get_all_data:11:::::$userData1');
-
-      if(userData!=null){
-        print('get_image:::${userData1['picture']}');
-        print('get_image1:::${userData1['picture']}');
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
-      }
-
-      setState(() {
-        _userData = userData;
-      });
-    }
-  }
-
-  void _printCredentials(AccessToken accessToken) {
-    print(prettyPrint(_accessToken.toJson()));
+  Future<void> dbInit() async {
+    db = await DatabaseHelper.instance.database;
   }
 
 
@@ -303,9 +246,28 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(25)
                     ),
 
-                    onPressed: () {
+                    onPressed: () async {
                       if(_formKey.currentState.validate()){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FirstInroScreen()));
+                        List<Map>result = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[email.text]);
+
+                        if(result.length!=0){
+                          result.forEach((row) {
+                            if(row['loginwith']=="email" && row['email'] == email.text && row['password']==password.text) {
+                              Utility.showToast("Login Successfully");
+
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => FirstInroScreen()));
+
+                            }else{
+                              Utility.showToast("User is not Exist");
+                              print('else_1::::${result.length}');
+                            }
+                          });
+
+                        }else{
+                          Utility.showToast("User is not Exist");
+                          print('else_2::::${result.length}');
+                        }
                       }
                     },
                   ),
@@ -324,12 +286,9 @@ class _LoginState extends State<Login> {
 
                       /*facebook*/
                       GestureDetector(
-                        // onTap: (){
-                        //   initiateFacebookLogin();
-                        // },
-
                         onTap: (){
-                          _login();
+                          login_with = "facebook";
+                          _loginFB();
                           },
 
                         child: Container(
@@ -341,6 +300,7 @@ class _LoginState extends State<Login> {
                       /*google login*/
                       GestureDetector(
                         onTap: () async{
+                          login_with = "gmail";
                           signInWithGoogle();
                         },
 
@@ -392,14 +352,21 @@ class _LoginState extends State<Login> {
   }
 
 
+
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    final idToken = googleSignInAuthentication.idToken;
+
+    Map<String, dynamic> idMap = parseJwt(idToken);
+
+    final String firstName = idMap["given_name"];
+    final String lastName = idMap["family_name"];
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken);
 
     final AuthResult authResult = await _auth.signInWithCredential(credential);
     final FirebaseUser user = authResult.user;
@@ -410,16 +377,159 @@ class _LoginState extends State<Login> {
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
 
-    print('diaplay_name:::${user.displayName}');
-    print('diaplay_email:::${user.email}');
-    print('diaplay_number:::${user.phoneNumber}');
-
-    prefs.setString(Utility.USER_EMAIL, user.email);
-    prefs.setString(Utility.USER_NAME, user.displayName);
+    // prefs.setString(Utility.USER_EMAIL, user.email);
+    // prefs.setString(Utility.USER_NAME, user.displayName);
 
     if(user!=null){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+      List<Map> result1 = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[user.email]);
+
+      if(result1.length!=0){
+        result1.forEach((row) {
+          _update(user.uid, firstName, lastName, user.email, "", "", login_with, row['id']);
+        });
+
+      }else{
+        _insert(user.uid, firstName, lastName, user.email, "", "", login_with);
+      }
+
+      Future.delayed(Duration(milliseconds: 50), () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+      });
     }
     return 'signInWithGoogle succeeded: $user';
   }
+
+
+  static Map<String, dynamic> parseJwt(String token) {
+    if (token == null) return null;
+    final List<String> parts = token.split('.');
+    if (parts.length != 3) {
+      return null;
+    }
+    final String payload = parts[1];
+    final String normalized = base64Url.normalize(payload);
+    final String resp = utf8.decode(base64Url.decode(normalized));
+
+    final payloadMap = json.decode(resp);
+    if (payloadMap is! Map<String, dynamic>) {
+      return null;
+    }
+    return payloadMap;
+  }
+
+
+
+  Future<void> _loginFB() async {
+    try {
+      _accessToken = await FacebookAuth.instance.login();
+      _printCredentials(_accessToken);
+
+      final userData = await FacebookAuth.instance.getUserData();
+      _userData = userData;
+      _checkIfIsLogged();
+
+    } on FacebookAuthException catch (e) {
+      print('CATCH:::::${e.message}');
+
+      switch (e.errorCode) {
+        case FacebookAuthErrorCode.OPERATION_IN_PROGRESS:
+          Utility.showToast("You have a previous login operation in progress");
+          break;
+
+        case FacebookAuthErrorCode.CANCELLED:
+          Utility.showToast("login cancelled");
+          break;
+
+        case FacebookAuthErrorCode.FAILED:
+          Utility.showToast("login failed");
+          break;
+      }
+
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+  }
+
+
+  Future<void> _checkIfIsLogged() async {
+    final AccessToken accessToken = await FacebookAuth.instance.isLogged;
+
+    if (accessToken != null) {
+      final userData = await FacebookAuth.instance.getUserData();
+      _accessToken = accessToken;
+
+      final userData1 = await FacebookAuth.instance.getUserData(fields: "first_name,last_name,gender,email,birthday,friends,link,name,picture");
+
+      if(userData!=null){
+        List<Map> result1 = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[userData1['email']]);
+
+        if(result1.length!=0){
+          result1.forEach((row) {
+            _update(userData1['id'], userData1['first_name'], userData1['last_name'], userData1['email'],
+                "", "", login_with, row['id']);
+          });
+        }else{
+          _insert(userData1['id'], userData1['first_name'], userData1['last_name'], userData1['email'],
+              "", "", login_with);
+        }
+
+        Future.delayed(Duration(milliseconds: 50), () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+        });
+      }
+
+      setState(() {
+        _userData = userData;
+      });
+    }
+  }
+
+
+  void _printCredentials(AccessToken accessToken) {
+    print(prettyPrint(_accessToken.toJson()));
+  }
+
+
+  String prettyPrint(Map json) {
+    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    String pretty = encoder.convert(json);
+    return pretty;
+  }
+
+
+
+  void _insert(String columnID, String f_name, String l_name, String email, String password, String ischeck, String login_with) async {
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnAppId : columnID,
+      DatabaseHelper.columnFName : f_name,
+      DatabaseHelper.columnLName  : l_name,
+      DatabaseHelper.columnEmail : email,
+      DatabaseHelper.columnPassword : password,
+      DatabaseHelper.columnIscheck : ischeck,
+      DatabaseHelper.columnLoginwith : login_with,
+    };
+
+    final id = await dbHelper.insert(row);
+    print('inserted row id: $id');
+    Utility.showToast("Register Successfully!");
+  }
+
+  void _update(String columnID, String f_name, String l_name, String email, String password,
+      String ischeck, String login_with, int item_id) async {
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnAppId : columnID,
+      DatabaseHelper.columnFName : f_name,
+      DatabaseHelper.columnLName  : l_name,
+      DatabaseHelper.columnEmail : email,
+      DatabaseHelper.columnPassword : password,
+      DatabaseHelper.columnIscheck : ischeck,
+      DatabaseHelper.columnLoginwith : login_with,
+    };
+
+    final id = await dbHelper.updateItem(row, item_id);
+    print('updated_ROW:::::: $id');
+    Utility.showToast("User Updated Successfully!");
+  }
+
 }

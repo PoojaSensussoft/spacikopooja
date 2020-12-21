@@ -33,7 +33,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
     super.initState();
     SharedPreferences.getInstance().then((prefValue) => {
       setState(() {
-        userName = prefValue.getString(Utility.USER_NAME)?? false;
+        userName = prefValue.getString(Utility.USER_NAME)?? '';
       })
     });
   }
