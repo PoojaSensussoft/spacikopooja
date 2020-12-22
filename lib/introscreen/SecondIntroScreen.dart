@@ -148,7 +148,8 @@ class _SecondIntroScreenState extends State<SecondIntroScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
 
                       onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (BuildContext context) => Home()));
                       },
                     ),
                   ),

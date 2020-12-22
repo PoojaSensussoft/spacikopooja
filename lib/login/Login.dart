@@ -7,6 +7,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/Database/database_helper.dart';
+import 'package:spacikopooja/forgot_password/Forgot_Password.dart';
 import 'package:spacikopooja/introscreen/FirstIntroScreen.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/Validation.dart';
@@ -17,13 +18,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/cupertino.dart';
 
+class Login extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Login_1(),
+    );
+  }
+}
 
-class Login extends StatefulWidget {
+
+class Login_1 extends StatefulWidget {
+
   @override
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+
+class _LoginState extends State<Login_1> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController email = new TextEditingController();
  TextEditingController password = new TextEditingController();
@@ -90,12 +103,12 @@ class _LoginState extends State<Login> {
 
 
   Future<void> dbInit() async {
+    prefs = await SharedPreferences.getInstance();
     db = await DatabaseHelper.instance.database;
   }
 
 
   Future<void> main() async {
-    prefs = await SharedPreferences.getInstance();
     var email = prefs.getString(Utility.USER_EMAIL);
     print('get_mail::::$email');
     runApp(MaterialApp(debugShowCheckedModeBanner: false,
@@ -227,9 +240,16 @@ class _LoginState extends State<Login> {
                 ),
 
                 /*forgot password*/
-                Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Text("Forgot Password?", style: TextStyle(fontFamily: "poppins_medium", fontSize: 16 ,color: spacikoColor.Colorblack), ),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => ForgotPassword()));
+                  },
+
+                  child: Container(
+                    margin: EdgeInsets.only(top: 15),
+                    child: Text("Forgot Password?", style: TextStyle(fontFamily: "poppins_medium", fontSize: 16 ,color: spacikoColor.Colorblack), ),
+                  ),
                 ),
 
                 /*login button*/
@@ -255,8 +275,14 @@ class _LoginState extends State<Login> {
                             if(row['loginwith']=="email" && row['email'] == email.text && row['password']==password.text) {
                               Utility.showToast("Login Successfully");
 
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => FirstInroScreen()));
+                              String name = row['fname']+" "+row['lname'];
+                              print('nnmmaaee::::$name');
+
+                              prefs.setString(Utility.USER_EMAIL, email.text);
+                              prefs.setString(Utility.USER_NAME, name);
+
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
 
                             }else{
                               Utility.showToast("User is not Exist");
@@ -331,6 +357,7 @@ class _LoginState extends State<Login> {
                             ..onTap=(){
                             print(email.text);
                             print(password.text);
+
                               Navigator.push(context, MaterialPageRoute(
                                   builder : (context) => Register(email.text, password.text)
                               ));
@@ -377,8 +404,8 @@ class _LoginState extends State<Login> {
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
 
-    // prefs.setString(Utility.USER_EMAIL, user.email);
-    // prefs.setString(Utility.USER_NAME, user.displayName);
+    prefs.setString(Utility.USER_EMAIL, user.email);
+    prefs.setString(Utility.USER_NAME, user.displayName);
 
     if(user!=null){
       List<Map> result1 = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[user.email]);
@@ -393,7 +420,8 @@ class _LoginState extends State<Login> {
       }
 
       Future.delayed(Duration(milliseconds: 50), () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
       });
     }
     return 'signInWithGoogle succeeded: $user';
@@ -474,8 +502,14 @@ class _LoginState extends State<Login> {
               "", "", login_with);
         }
 
+        String name = userData1['first_name']+" "+userData1['last_name'];
+
+        prefs.setString(Utility.USER_EMAIL, userData1['email']);
+        prefs.setString(Utility.USER_NAME, name);
+
         Future.delayed(Duration(milliseconds: 50), () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
         });
       }
 
@@ -496,7 +530,6 @@ class _LoginState extends State<Login> {
     String pretty = encoder.convert(json);
     return pretty;
   }
-
 
 
   void _insert(String columnID, String f_name, String l_name, String email, String password, String ischeck, String login_with) async {

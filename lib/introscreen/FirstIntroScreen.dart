@@ -157,8 +157,10 @@ class _FirstInroScreeState extends State<FirstInroScreen> {
                           Container(
                             width: 115,
                             child: GestureDetector(
+
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => SecondIntroScreen()));
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(builder: (BuildContext context) => SecondIntroScreen()));
                               },
                             ),
                           ),

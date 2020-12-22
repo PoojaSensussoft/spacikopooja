@@ -64,6 +64,7 @@ class _RegisterState extends State<Register> {
   }
 
   Future<void> dbInit() async {
+    prefs = await SharedPreferences.getInstance();
      db = await DatabaseHelper.instance.database;
   }
 
@@ -423,6 +424,7 @@ class _RegisterState extends State<Register> {
 
                                   recognizer: TapGestureRecognizer()
                                     ..onTap=(){
+
                                       Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(builder: (BuildContext context) => Login()));
                                     }
@@ -457,6 +459,15 @@ class _RegisterState extends State<Register> {
     final id = await dbHelper.insert(row);
     print('inserted row id: $id');
     Utility.showToast("Register Successfully!");
+
+    prefs.setString(Utility.USER_EMAIL, email);
+    prefs.setString(Utility.USER_NAME, f_name+" "+l_name);
+
+
+    Future.delayed(Duration(milliseconds: 50), () {
+        Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
+    });
   }
 
   void _update(String columnID, String f_name, String l_name, String email, String password,
@@ -474,6 +485,14 @@ class _RegisterState extends State<Register> {
     final id = await dbHelper.updateItem(row, item_id);
     print('updated_ROW:::::: $id');
     Utility.showToast("User Updated Successfully!");
+
+    prefs.setString(Utility.USER_EMAIL, email);
+    prefs.setString(Utility.USER_NAME, f_name+" "+l_name);
+
+    Future.delayed(Duration(milliseconds: 50), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
+    });
   }
 
   void _query() async{
@@ -523,7 +542,8 @@ class _RegisterState extends State<Register> {
       }
 
       Future.delayed(Duration(milliseconds: 50), () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
       });
     }
     return 'signInWithGoogle succeeded: $user';
@@ -604,7 +624,8 @@ class _RegisterState extends State<Register> {
         }
 
         Future.delayed(Duration(milliseconds: 50), () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {return FirstInroScreen();}));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
         });
       }
 
