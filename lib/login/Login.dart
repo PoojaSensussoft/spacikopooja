@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/Database/database_helper.dart';
@@ -18,6 +20,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/cupertino.dart';
 
+
+
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,18 +32,20 @@ class Login extends StatelessWidget {
   }
 }
 
-
 class Login_1 extends StatefulWidget {
 
   @override
   _LoginState createState() => _LoginState();
 }
 
+Future<dynamic> myBackgroundHandler(Map<String, dynamic> message) {
+  return _LoginState()._showNotification(message);
+}
 
 class _LoginState extends State<Login_1> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController email = new TextEditingController();
- TextEditingController password = new TextEditingController();
+  TextEditingController password = new TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -49,8 +55,6 @@ class _LoginState extends State<Login_1> {
   Map<String, dynamic> _userData;
   AccessToken _accessToken;
 
-  String _homeScreenText = "Waiting for token...";
-  String _messageText = "Waiting for message...";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final dbHelper = DatabaseHelper.instance;
@@ -58,49 +62,93 @@ class _LoginState extends State<Login_1> {
   String isCheck = "false";
   String login_with = "";
 
+  List<Message> messagesList;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  DatabaseReference itemRef;
+  List<Item> items = List();
+  Item item;
+
+  Future _showNotification(Map<String, dynamic> message) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'channel id',
+      'channel name',
+      'channel desc',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var platformChannelSpecifics =
+    new NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'new message arived',
+      'i want ${message['data']['title']} for ${message['data']['price']}',
+      platformChannelSpecifics,
+      payload: 'Default_Sound',
+    );
+  }
+
 
   @override
   void initState() {
     super.initState();
+    make_table_in_firebase();
+
+    queryUsers().then((query){
+      query.once().then((snapshot){
+        print('get_all_data::::$snapshot');
+      });
+    });
+
     dbInit();
-    // main();
+     // main();
+
+    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
 
     _firebaseMessaging.configure(
+      onBackgroundMessage: myBackgroundHandler,
       onMessage: (Map<String, dynamic> message) async {
-        setState(() {
-          _messageText = "Push Messaging message: $message";
-        });
         print("onMessage: $message");
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        setState(() {
-          _messageText = "Push Messaging message: $message";
-        });
-        print("onLaunch: $message");
-      },
-      onResume: (Map<String, dynamic> message) async {
-        setState(() {
-          _messageText = "Push Messaging message: $message";
-        });
-        print("onResume: $message");
+
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('new message arived'),
+                content: Text(
+                    'i want ${message['notification']['title']} for ${message['notification']['body']}'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
       },
     );
 
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
-    _firebaseMessaging.getToken().then((String token) {
-      assert(token != null);
-      setState(() {
-        _homeScreenText = "Push Messaging token: $token";
-      });
-      print(_homeScreenText);
+    _getToken();
+
+  }
+
+  _getToken() {
+    _firebaseMessaging.getToken().then((token) {
+      print("DeviceToken:::$token");
+      prefs.setString(Utility.DEVICE_TOKEN, token);
+      item.device_token = token;
     });
   }
 
+  Future selectNotification(String payload) async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
 
   Future<void> dbInit() async {
     prefs = await SharedPreferences.getInstance();
@@ -109,6 +157,7 @@ class _LoginState extends State<Login_1> {
 
 
   Future<void> main() async {
+    prefs = await SharedPreferences.getInstance();
     var email = prefs.getString(Utility.USER_EMAIL);
     print('get_mail::::$email');
     runApp(MaterialApp(debugShowCheckedModeBanner: false,
@@ -278,9 +327,12 @@ class _LoginState extends State<Login_1> {
                               String name = row['fname']+" "+row['lname'];
                               print('nnmmaaee::::$name');
 
-                              prefs.setString(Utility.USER_EMAIL, email.text);
-                              prefs.setString(Utility.USER_NAME, name);
+                              // prefs.setString(Utility.USER_EMAIL, email.text);
+                              // prefs.setString(Utility.USER_NAME, name);
 
+                              item.email = email.text;
+
+                              itemRef.push().set(item.toJson());
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
 
@@ -332,7 +384,7 @@ class _LoginState extends State<Login_1> {
 
                         child: Container(
                           margin: EdgeInsets.only(top: 15),
-                          child: Image(image: AssetImage('image/search.png'), height: 40, width: 40,),
+                          child: Image(image: AssetImage('image/search.png'), height: 40, width: 40),
                         ),
                       ),
                     ],
@@ -378,7 +430,15 @@ class _LoginState extends State<Login_1> {
     );
   }
 
+  void handleSubmit() {
+    final FormState form = _formKey.currentState;
 
+    if (form.validate()) {
+      form.save();
+      form.reset();
+      itemRef.push().set(item.toJson());
+    }
+  }
 
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
@@ -565,4 +625,65 @@ class _LoginState extends State<Login_1> {
     Utility.showToast("User Updated Successfully!");
   }
 
+
+  void make_table_in_firebase() {
+    item = Item("", "");
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    itemRef = database.reference().child('Users');
+    itemRef.onChildAdded.listen(_onEntryAdded);
+    itemRef.onChildChanged.listen(_onEntryChanged);
+  }
+
+  _onEntryAdded(Event event) {
+    setState(() {
+      items.add(Item.fromSnapshot(event.snapshot));
+    });
+  }
+
+  _onEntryChanged(Event event) {
+    var old = items.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+    setState(() {
+      items[items.indexOf(old)] = Item.fromSnapshot(event.snapshot);
+    });
+  }
+
+  static Future<Query> queryUsers() async{
+    return FirebaseDatabase.instance.reference().child("Users");
+  }
+
+}
+
+class Item {
+  String key;
+  String email;
+  String device_token;
+
+  Item(this.email, this.device_token);
+
+  Item.fromSnapshot(DataSnapshot snapshot)
+      : key = snapshot.key,
+        email = snapshot.value["email"],
+        device_token = snapshot.value["device_token"];
+
+  toJson() {
+    return {
+      "email": email,
+      "device_token": device_token,
+    };
+  }
+}
+
+
+
+class Message {
+  String title;
+  String body;
+  String message;
+  Message(title, body, message) {
+    this.title = title;
+    this.body = body;
+    this.message = message;
+  }
 }

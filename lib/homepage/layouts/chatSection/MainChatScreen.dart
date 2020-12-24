@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:convert' show Encoding, json;
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 import 'ChatList.dart';
@@ -10,6 +14,9 @@ class MainchatScreen extends StatefulWidget {
 }
 
 class _MainchatScreenState extends State<MainchatScreen> {
+  TextEditingController textMessage = new TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     return  Column(
@@ -57,6 +64,7 @@ class _MainchatScreenState extends State<MainchatScreen> {
                   Padding(
                     padding: EdgeInsets.only(right: 35),
                     child: TextField(
+                      controller: textMessage,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         hintText: 'Type Message...',
@@ -67,14 +75,21 @@ class _MainchatScreenState extends State<MainchatScreen> {
                     ),
                   ),
 
-                  Container(
-                    padding: EdgeInsets.only(left:10, top: 15, bottom: 10, right: 10),
-                    alignment: Alignment.centerRight,
-                    child: Image(
+                  GestureDetector(
+                     onTap: (){
+                       sendFcmMessage(textMessage.text);
+                       textMessage.clear();
+                     },
+
+                    child: Container(
+                      padding: EdgeInsets.only(left:10, top: 15, bottom: 10, right: 10),
                       alignment: Alignment.centerRight,
-                      width: 25,
-                      height: 25,
-                      image: AssetImage('image/ic_send_msg.png'),
+                      child: Image(
+                        alignment: Alignment.centerRight,
+                        width: 25,
+                        height: 25,
+                        image: AssetImage('image/ic_send_msg.png'),
+                      ),
                     ),
                   )
                 ],
@@ -85,4 +100,42 @@ class _MainchatScreenState extends State<MainchatScreen> {
       ],
     );
   }
+
+  Future<bool> sendFcmMessage(String text) async {
+    try{
+      var url = 'https://fcm.googleapis.com/fcm/send';
+      var header = {
+      "Content-Type": "application/json",
+      "Authorization":
+      "key=AAAA8GKPRcg:APA91bEJqq2qkGNbg57T1XJu8BGxH_C1gszQXcBCPYLkHJy-LKMjW8nakl0rZqgJrqKKzHb0BJ9aRJ1Pi_U5EWorTgMOsxqLlWPCw9_Kze1KMpIfdwfdsYJL6K2gq2CJKe5oKCQ88Yj8",
+      };
+
+    var request = {
+      'notification': {'title': "Spaciko Pooja App", 'body': text},
+      'data': {
+        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+        'type': 'COMMENT'
+      },
+      'to': 'crBBpaX0SHuLkMX2IJG5sD:APA91bE7NxVfw4xL6OO4J_B5Dbl1pJWceSsSTLdQpTGEjJn0iMm-pGFENwmurEUePY8Icw_I3Q34BvWXwGqPAX6536cYSh70KfLBHvX-CTjKmTnBPbaBH4N2XpV4F4puSgbpSj_HjBXm'
+    };
+
+    final response = await http.post(url, body: json.encode(request), encoding: Encoding.getByName('utf-8'), headers: header);
+
+    if (response.statusCode == 200) {
+      print("status:IF:::::");
+      Utility.showToast("Message send successfully");
+      return true;
+    } else {
+      print("status:ELSE:::::");
+      return false;
+    }
+
+  } catch (e, s) {
+  print('CATCH:::::$e');
+
+  return false;
+  }
+
+  }
+
 }

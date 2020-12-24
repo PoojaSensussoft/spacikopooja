@@ -7,6 +7,8 @@ class Utility{
   static String USER_EMAIL = 'user_email';
   static String USER_NAME = 'user_name';
 
+  static String DEVICE_TOKEN = 'device_token';
+
   static showToast(String message){
     Fluttertoast.showToast(
       fontSize: 14,
