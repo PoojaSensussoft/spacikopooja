@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -54,7 +55,10 @@ class _RegisterState extends State<Register> {
   AccessToken _accessToken;
 
   Database db;
-
+  DatabaseReference databaseReference;
+  List<Item> items = List();
+  Item item;
+  List<String>_listemail = List();
 
   @override
   void initState() {
@@ -364,6 +368,9 @@ class _RegisterState extends State<Register> {
                           }else{
                             _insert("", controllerfname.text, controllerlname.text, controlleremail.text,
                                 controllerpassword.text, isCheck, login_with);
+
+                            add_databse(controlleremail.text);
+
                           }
                         }
                       },
@@ -424,7 +431,6 @@ class _RegisterState extends State<Register> {
 
                                   recognizer: TapGestureRecognizer()
                                     ..onTap=(){
-
                                       Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(builder: (BuildContext context) => Login()));
                                     }
@@ -539,6 +545,8 @@ class _RegisterState extends State<Register> {
 
       }else{
         _insert(user.uid, firstName, lastName, user.email, "", "", login_with);
+
+        add_databse(user.email);
       }
 
       Future.delayed(Duration(milliseconds: 50), () {
@@ -617,10 +625,14 @@ class _RegisterState extends State<Register> {
           result1.forEach((row) {
             _update(userData1['id'], userData1['first_name'], userData1['last_name'], userData1['email'],
                 "", "", login_with, row['id']);
+            add_databse(userData1['email']);
           });
+
         }else{
           _insert(userData1['id'], userData1['first_name'], userData1['last_name'], userData1['email'],
               "", "", login_with);
+
+          add_databse(userData1['email']);
         }
 
         Future.delayed(Duration(milliseconds: 50), () {
@@ -646,4 +658,71 @@ class _RegisterState extends State<Register> {
     String pretty = encoder.convert(json);
     return pretty;
   }
+
+  void make_table_in_firebase() {
+    item = Item("", "");
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    databaseReference = database.reference().child('Users');
+    databaseReference.onChildAdded.listen(_onEntryAdded);
+    databaseReference.onChildChanged.listen(_onEntryChanged);
+  }
+
+  _onEntryAdded(Event event) {
+    setState(() {
+      items.add(Item.fromSnapshot(event.snapshot));
+    });
+  }
+
+  _onEntryChanged(Event event) {
+    var old = items.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+    setState(() {
+      items[items.indexOf(old)] = Item.fromSnapshot(event.snapshot);
+    });
+  }
+
+  void add_databse(String text) {
+    print('get_email::::::$text');
+
+    databaseReference = FirebaseDatabase.instance.reference().child("Users");
+
+    databaseReference.once().then((DataSnapshot snapshot){
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key,values) {
+        item.email = text;
+        print('Email::::${values['email']}');
+        _listemail.add(values['email']);
+      });
+    });
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      print('CHECK:::::${_listemail.length}   $text');
+      if(_listemail.length!=0 && !_listemail.contains(text)){
+        databaseReference.push().set(item.toJson());
+      }
+    });
+  }
+
 }
+
+class Item {
+  String key;
+  String email;
+  String device_token;
+
+  Item(this.email, this.device_token);
+
+  Item.fromSnapshot(DataSnapshot snapshot)
+      : key = snapshot.key,
+        email = snapshot.value["email"],
+        device_token = snapshot.value["device_token"];
+
+  toJson() {
+    return {
+      "email": email,
+      "device_token": device_token,
+    };
+  }
+}
+

@@ -1,6 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:spacikopooja/homepage/layouts/chatSection/CustomChatBubble.dart';
-import 'package:spacikopooja/model/ChatModel.dart';
+import 'package:spacikopooja/model/chatMessage.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 class ChatList extends StatefulWidget {
@@ -9,21 +10,15 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  List<ChatModel> _list = [
-    ChatModel("Hello hjfhfjh jndjfhdjf nbfdjhfjdhf dfhdjfhdj jfhdjfhjdhfdjhfdjhfjfhj!dkfjdkfkdjkfdkfkfkd", "me"),
-    ChatModel("Hello!vre krnernrjkrjtjrt", "sender"),
-    ChatModel("How are You?", "me"),
-    ChatModel("I am Fine!", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("How are you?", "sender"),
-    ChatModel("I am good!", "me")
-  ];
+  List<chatMessage>items = List();
+  chatMessage chatmessage;
+  DatabaseReference databaseReference;
 
+  @override
+  void initState() {
+    super.initState();
+    getchatListData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +27,7 @@ class _ChatListState extends State<ChatList> {
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         scrollDirection: Axis.vertical,
-        itemCount: _list.length,
+        itemCount: items.length,
         itemBuilder: (context, index) {
 
           return GestureDetector(
@@ -43,7 +38,7 @@ class _ChatListState extends State<ChatList> {
             child: Padding(
               padding: EdgeInsets.all(15),
 
-              child: _list[index].type=="me"? Container(
+              child: items[index].is_sender==true? Container(
                   alignment: Alignment.centerRight,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -56,7 +51,7 @@ class _ChatListState extends State<ChatList> {
                             painter: CustomChatBubble(isOwn: true, color: spacikoColor.ColorLightChat),
                             child: Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(_list[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
+                              child: Text(items[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
                                   fontSize: 15)),
                             ),
                           ),
@@ -100,7 +95,7 @@ class _ChatListState extends State<ChatList> {
                               painter: CustomChatBubble(isOwn: false, color: spacikoColor.ColorLightChat),
                               child: Container(
                                 padding: EdgeInsets.all(10),
-                                child: Text(_list[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
+                                child: Text(items[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
                                     fontSize: 15)
                                 ),
                               )
@@ -119,4 +114,17 @@ class _ChatListState extends State<ChatList> {
       ),
     );
   }
+
+  void getchatListData() {
+    chatmessage = chatMessage("hello", "hello",false);
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+
+    databaseReference = database.reference().child('Message');
+
+    databaseReference.onChildAdded.forEach((element) =>{
+      print("get_values_111:::::${element.snapshot.key}")
+
+    });
+  }
 }
+

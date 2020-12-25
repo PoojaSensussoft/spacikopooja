@@ -1,21 +1,35 @@
 import 'dart:async';
 import 'dart:convert' show Encoding, json;
+import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:spacikopooja/model/chatMessage.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-
 import 'ChatList.dart';
+
 
 class MainchatScreen extends StatefulWidget {
   @override
   _MainchatScreenState createState() => _MainchatScreenState();
 }
 
+
 class _MainchatScreenState extends State<MainchatScreen> {
   TextEditingController textMessage = new TextEditingController();
+  DatabaseReference databaseReference;
+  chatMessage item;
+  DateTime now = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
+  String currentTime;
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +91,29 @@ class _MainchatScreenState extends State<MainchatScreen> {
 
                   GestureDetector(
                      onTap: (){
-                       sendFcmMessage(textMessage.text);
+                       // sendFcmMessage(textMessage.text);
+
+                       currentTime = now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString();
+
+                       print('current_time:::::$currentTime');
+
+                       item.message = textMessage.text;
+                       item.time  =  currentTime;
+                       item.is_sender = true;
+
                        textMessage.clear();
+                       databaseReference = FirebaseDatabase.instance.reference().child("Message").child('message_1_to_message_2');
+                       databaseReference.push().set(item.toJson());
+
+                       item.is_sender = false;
+                       databaseReference = FirebaseDatabase.instance.reference().child("Message").child('message_2_to_message_1');
+                       databaseReference.push().set(item.toJson());
                      },
 
                     child: Container(
                       padding: EdgeInsets.only(left:10, top: 15, bottom: 10, right: 10),
                       alignment: Alignment.centerRight,
+
                       child: Image(
                         alignment: Alignment.centerRight,
                         width: 25,
@@ -139,3 +169,4 @@ class _MainchatScreenState extends State<MainchatScreen> {
   }
 
 }
+

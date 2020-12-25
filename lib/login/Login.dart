@@ -21,7 +21,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/cupertino.dart';
 
 
-
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -58,16 +57,18 @@ class _LoginState extends State<Login_1> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   final dbHelper = DatabaseHelper.instance;
-  Database db;
+  Database  db;
   String isCheck = "false";
   String login_with = "";
 
   List<Message> messagesList;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  DatabaseReference itemRef;
+  DatabaseReference databaseReference;
   List<Item> items = List();
   Item item;
+  List<String>_listemail = List();
+
 
   Future _showNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
@@ -94,12 +95,6 @@ class _LoginState extends State<Login_1> {
   void initState() {
     super.initState();
     make_table_in_firebase();
-
-    queryUsers().then((query){
-      query.once().then((snapshot){
-        print('get_all_data::::$snapshot');
-      });
-    });
 
     dbInit();
      // main();
@@ -330,9 +325,24 @@ class _LoginState extends State<Login_1> {
                               // prefs.setString(Utility.USER_EMAIL, email.text);
                               // prefs.setString(Utility.USER_NAME, name);
 
-                              item.email = email.text;
+                              databaseReference = FirebaseDatabase.instance.reference().child("Users");
 
-                              itemRef.push().set(item.toJson());
+                              databaseReference.once().then((DataSnapshot snapshot){
+                                Map<dynamic, dynamic> values = snapshot.value;
+                                values.forEach((key,values) {
+                                  item.email = email.text;
+                                  print('Email::::${values['email']}');
+                                  _listemail.add(values['email']);
+                                });
+                              });
+
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                print('CHECK:::::${_listemail.length}   ${email.text}');
+                                if(_listemail.length!=0 && !_listemail.contains(email.text)){
+                                  databaseReference.push().set(item.toJson());
+                                }
+                              });
+
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
 
@@ -436,7 +446,7 @@ class _LoginState extends State<Login_1> {
     if (form.validate()) {
       form.save();
       form.reset();
-      itemRef.push().set(item.toJson());
+      databaseReference.push().set(item.toJson());
     }
   }
 
@@ -629,9 +639,9 @@ class _LoginState extends State<Login_1> {
   void make_table_in_firebase() {
     item = Item("", "");
     final FirebaseDatabase database = FirebaseDatabase.instance;
-    itemRef = database.reference().child('Users');
-    itemRef.onChildAdded.listen(_onEntryAdded);
-    itemRef.onChildChanged.listen(_onEntryChanged);
+    databaseReference = database.reference().child('Users');
+    databaseReference.onChildAdded.listen(_onEntryAdded);
+    databaseReference.onChildChanged.listen(_onEntryChanged);
   }
 
   _onEntryAdded(Event event) {
@@ -647,10 +657,6 @@ class _LoginState extends State<Login_1> {
     setState(() {
       items[items.indexOf(old)] = Item.fromSnapshot(event.snapshot);
     });
-  }
-
-  static Future<Query> queryUsers() async{
-    return FirebaseDatabase.instance.reference().child("Users");
   }
 
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spacikopooja/special_offer/SpecialOffer.dart';
 import 'package:spacikopooja/utils/setSizeBox.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-import 'ChatList.dart';
 import 'MainChatScreen.dart';
 
 
