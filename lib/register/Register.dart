@@ -356,6 +356,7 @@ class _RegisterState extends State<Register> {
 
                           if(result1.length!=0){
                             result1.forEach((row) {
+
                               if(row['loginwith']=="email") {
                                 Utility.showToast("Email id already exist!");
 
@@ -370,7 +371,6 @@ class _RegisterState extends State<Register> {
                                 controllerpassword.text, isCheck, login_with);
 
                             add_databse(controlleremail.text);
-
                           }
                         }
                       },

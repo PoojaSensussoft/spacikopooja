@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:spacikopooja/model/chatMessage.dart';
+import 'package:spacikopooja/model/note.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 import 'ChatList.dart';
@@ -20,7 +20,7 @@ class MainchatScreen extends StatefulWidget {
 class _MainchatScreenState extends State<MainchatScreen> {
   TextEditingController textMessage = new TextEditingController();
   DatabaseReference databaseReference;
-  chatMessage item;
+  Note item;
   DateTime now = DateTime.now();
   DateFormat formatter = DateFormat('yyyy-MM-dd');
   String currentTime;
@@ -80,6 +80,7 @@ class _MainchatScreenState extends State<MainchatScreen> {
                     child: TextField(
                       controller: textMessage,
                       keyboardType: TextInputType.text,
+
                       decoration: InputDecoration(
                         hintText: 'Type Message...',
                         hintStyle: TextStyle(color: spacikoColor.ColorBlackLightText, fontSize: 16, fontFamily:'poppins_regular'),
@@ -91,23 +92,36 @@ class _MainchatScreenState extends State<MainchatScreen> {
 
                   GestureDetector(
                      onTap: (){
-                       // sendFcmMessage(textMessage.text);
+                       sendFcmMessage(textMessage.text);
 
-                       currentTime = now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString();
+                       if(textMessage.text.isNotEmpty) {
+                         currentTime =
+                             now.hour.toString() + ":" + now.minute.toString() +
+                                 ":" + now.second.toString();
 
-                       print('current_time:::::$currentTime');
+                         print('current_time:::::$currentTime');
 
-                       item.message = textMessage.text;
-                       item.time  =  currentTime;
-                       item.is_sender = true;
+                         databaseReference = FirebaseDatabase.instance.reference().child("Message").child('message_1_to_message_2');
 
-                       textMessage.clear();
-                       databaseReference = FirebaseDatabase.instance.reference().child("Message").child('message_1_to_message_2');
-                       databaseReference.push().set(item.toJson());
+                         databaseReference.push().set({
+                           'message': textMessage.text,
+                           'time': currentTime,
+                           'is_sender': "true"
+                         });
 
-                       item.is_sender = false;
-                       databaseReference = FirebaseDatabase.instance.reference().child("Message").child('message_2_to_message_1');
-                       databaseReference.push().set(item.toJson());
+                         databaseReference =
+                             FirebaseDatabase.instance.reference().child("Message").child('message_2_to_message_1');
+
+                         databaseReference.push().set({
+                           'message': textMessage.text,
+                           'time': currentTime,
+                           'is_sender': "false"
+                         });
+                         textMessage.clear();
+
+                       }else{
+                         Utility.showToast('Enter Message');
+                       }
                      },
 
                     child: Container(
@@ -131,7 +145,9 @@ class _MainchatScreenState extends State<MainchatScreen> {
     );
   }
 
+
   Future<bool> sendFcmMessage(String text) async {
+
     try{
       var url = 'https://fcm.googleapis.com/fcm/send';
       var header = {
@@ -146,7 +162,7 @@ class _MainchatScreenState extends State<MainchatScreen> {
         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
         'type': 'COMMENT'
       },
-      'to': 'crBBpaX0SHuLkMX2IJG5sD:APA91bE7NxVfw4xL6OO4J_B5Dbl1pJWceSsSTLdQpTGEjJn0iMm-pGFENwmurEUePY8Icw_I3Q34BvWXwGqPAX6536cYSh70KfLBHvX-CTjKmTnBPbaBH4N2XpV4F4puSgbpSj_HjBXm'
+      'to': 'ftslcFufz0VPickdVziXh8:APA91bGZjJHoekm4vBHOudf58qQSbEeNTV0vqU8N2N7okU33kwItETe3F7jkpHsSWftqOc-yeIP_bUtR5otMVygjz3iYOPcxFn6WbZsyWUcFGOQsEhMHTKj-hFMDJj4yXwAn1TB6xtfz'
     };
 
     final response = await http.post(url, body: json.encode(request), encoding: Encoding.getByName('utf-8'), headers: header);

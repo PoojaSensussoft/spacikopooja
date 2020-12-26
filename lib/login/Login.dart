@@ -41,6 +41,7 @@ Future<dynamic> myBackgroundHandler(Map<String, dynamic> message) {
   return _LoginState()._showNotification(message);
 }
 
+
 class _LoginState extends State<Login_1> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController email = new TextEditingController();
@@ -69,7 +70,6 @@ class _LoginState extends State<Login_1> {
   Item item;
   List<String>_listemail = List();
 
-
   Future _showNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channel id',
@@ -94,7 +94,6 @@ class _LoginState extends State<Login_1> {
   @override
   void initState() {
     super.initState();
-    make_table_in_firebase();
 
     dbInit();
      // main();
@@ -633,30 +632,6 @@ class _LoginState extends State<Login_1> {
     final id = await dbHelper.updateItem(row, item_id);
     print('updated_ROW:::::: $id');
     Utility.showToast("User Updated Successfully!");
-  }
-
-
-  void make_table_in_firebase() {
-    item = Item("", "");
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    databaseReference = database.reference().child('Users');
-    databaseReference.onChildAdded.listen(_onEntryAdded);
-    databaseReference.onChildChanged.listen(_onEntryChanged);
-  }
-
-  _onEntryAdded(Event event) {
-    setState(() {
-      items.add(Item.fromSnapshot(event.snapshot));
-    });
-  }
-
-  _onEntryChanged(Event event) {
-    var old = items.singleWhere((entry) {
-      return entry.key == event.snapshot.key;
-    });
-    setState(() {
-      items[items.indexOf(old)] = Item.fromSnapshot(event.snapshot);
-    });
   }
 
 }

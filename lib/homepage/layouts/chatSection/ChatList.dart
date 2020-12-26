@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:spacikopooja/homepage/layouts/chatSection/CustomChatBubble.dart';
 import 'package:spacikopooja/model/chatMessage.dart';
+import 'package:spacikopooja/model/note.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 class ChatList extends StatefulWidget {
@@ -10,35 +13,55 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  List<chatMessage>items = List();
-  chatMessage chatmessage;
   DatabaseReference databaseReference;
+  final notesReference = FirebaseDatabase.instance.reference().child('Message').child('message_1_to_message_2');
+  StreamSubscription<Event> _onNoteAddedSubscription;
+  List<Note> items1;
+  final _controller = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    getchatListData();
+    // getchatListData();
+
+    items1 = new List();
+    _onNoteAddedSubscription = notesReference.onChildAdded.listen(_onNoteAdded);
   }
+
+  void _onNoteAdded(Event event) {
+    setState(() {
+      items1.add(new Note.fromSnapshot(event.snapshot));
+      print('LIST_OF_ITEMS:::::${items1.length}');
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    Timer(
+      Duration(seconds: 1),
+          () => _controller.jumpTo(_controller.position.maxScrollExtent),
+    );
     return Flexible(
       child: ListView.builder(
+        controller: _controller,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         scrollDirection: Axis.vertical,
-        itemCount: items.length,
+        itemCount: items1.length,
         itemBuilder: (context, index) {
 
           return GestureDetector(
             onTap: () {
-              setState(() {});
+              setState(() {
+
+              });
             },
 
             child: Padding(
               padding: EdgeInsets.all(15),
 
-              child: items[index].is_sender==true? Container(
+              child: items1[index].is_sender=="true"? Container(
                   alignment: Alignment.centerRight,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -51,7 +74,8 @@ class _ChatListState extends State<ChatList> {
                             painter: CustomChatBubble(isOwn: true, color: spacikoColor.ColorLightChat),
                             child: Container(
                               padding: EdgeInsets.all(10),
-                              child: Text(items[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
+                              child: Text('${items1[index].message??''}',
+                                  style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
                                   fontSize: 15)),
                             ),
                           ),
@@ -95,8 +119,8 @@ class _ChatListState extends State<ChatList> {
                               painter: CustomChatBubble(isOwn: false, color: spacikoColor.ColorLightChat),
                               child: Container(
                                 padding: EdgeInsets.all(10),
-                                child: Text(items[index].message, style: TextStyle(color: spacikoColor.Colorblack, fontFamily: 'poppins_regular',
-                                    fontSize: 15)
+                                child: Text(items1[index].message??'', style: TextStyle(color: spacikoColor.Colorblack,
+                                    fontFamily: 'poppins_regular', fontSize: 15)
                                 ),
                               )
                           ),
@@ -115,16 +139,5 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  void getchatListData() {
-    chatmessage = chatMessage("hello", "hello",false);
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-
-    databaseReference = database.reference().child('Message');
-
-    databaseReference.onChildAdded.forEach((element) =>{
-      print("get_values_111:::::${element.snapshot.key}")
-
-    });
-  }
 }
 
