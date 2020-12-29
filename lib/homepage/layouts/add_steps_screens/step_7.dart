@@ -208,7 +208,7 @@ class _SevenStepState extends State<SevenStep> {
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: spacikoColor.Colorpink),
                   width: 17,
                   height: 17,
-                  child: Icon(Icons.close_rounded, color: spacikoColor.Colorwhite, size: 15,),
+                  child: Icon(Icons.close_rounded, color: spacikoColor.Colorwhite, size: 15),
                 ),
               ),
             )

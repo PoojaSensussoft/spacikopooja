@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/booking/BookingSceen.dart';
+import 'package:spacikopooja/homepage/layouts/profile/MyProfile.dart';
 import 'package:spacikopooja/login/Login.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
@@ -177,7 +178,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25)),
                     onPressed: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfile()));
                     },
                   ),
                 ),

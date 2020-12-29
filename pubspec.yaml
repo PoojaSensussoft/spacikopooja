@@ -52,8 +52,6 @@ dependencies:
 
   # facebook
 #  flutter_facebook_login: ^1.2.0
-#  http: ^0.12.0+2
-
 
   # Android IOS facebook sign in
   flutter_facebook_auth: ^1.0.2
@@ -70,6 +68,13 @@ dependencies:
   # Sqllite database
   sqflite: ^1.3.0
   path_provider: ^1.6.5
+
+  http: ^0.12.0
+  image_picker: ^0.6.6+5
+
+  #Text Encrpt- decrypt
+  flutter_string_encryption: ^0.3.1
+
 
 
 

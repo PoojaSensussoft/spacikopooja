@@ -66,7 +66,7 @@ class _BookingScreenState extends State<BookingScreen> {
             child: Container(
                      decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft:
                      Radius.circular(30), topRight: Radius.circular(30)),
-                     color: spacikoColor.Colorwhite),
+                     color: spacikoColor.Colorlihgt_green),
 
                 child: TabBarView(
                       children: [

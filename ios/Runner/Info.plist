@@ -60,6 +60,12 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>This app requires get access to micro phone</string>
 
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow access to photo library</string>
+
+    <key>NSCameraUsageDescription</key>
+    <string>Allow access to camera to capture photos</string>
+
 
     <key>CFBundleURLTypes</key>
     <array>

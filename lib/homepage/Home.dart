@@ -5,7 +5,7 @@ import 'layouts/CalenderNav.dart';
 import 'layouts/chatSection/ChatScreenNav.dart';
 import 'layouts/CompassNav.dart';
 import '../utils/CustomBottomNav.dart';
-import 'layouts/UserProfileNav.dart';
+import 'layouts/profile/UserProfileNav.dart';
 
 void main() => runApp(Home());
 
