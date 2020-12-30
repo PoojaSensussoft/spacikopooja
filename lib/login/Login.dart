@@ -96,7 +96,7 @@ class _LoginState extends State<Login_1> {
     super.initState();
 
     dbInit();
-     // main();
+     main();
 
     var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -321,8 +321,8 @@ class _LoginState extends State<Login_1> {
                               String name = row['fname']+" "+row['lname'];
                               print('nnmmaaee::::$name');
 
-                              // prefs.setString(Utility.USER_EMAIL, email.text);
-                              // prefs.setString(Utility.USER_NAME, name);
+                              prefs.setString(Utility.USER_EMAIL, email.text);
+                              prefs.setString(Utility.USER_NAME, name);
 
                               databaseReference = FirebaseDatabase.instance.reference().child("Users");
 

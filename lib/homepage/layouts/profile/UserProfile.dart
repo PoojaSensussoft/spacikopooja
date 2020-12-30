@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spacikopooja/model/ListData.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 
 
 class UserProfile extends StatefulWidget {
@@ -47,25 +47,16 @@ class _UserProfileState extends State<UserProfile> {
                   //   ),
                   // ),
 
-                  _image != null
-                      ? ClipRRect(
+                  _image != null ?
+                  ClipRRect(
                     borderRadius: BorderRadius.circular(50),
-                    child: Image.file(
-                      _image,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.fitHeight,
-                    ),
+                    child: Image.file(_image, width: 100, height: 100, fit: BoxFit.fitHeight),
                   )
                       : Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(50)),
+                    decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)),
                     width: 100,
                     height: 100,
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.grey[800],
+                    child: Icon(Icons.camera_alt, color: Colors.grey[800],
                     ),
                   ),
 
@@ -139,7 +130,7 @@ class _UserProfileState extends State<UserProfile> {
                 if(userName.text.isEmpty){
                   Utility.showToast("Enter User name");
                 }else{
-                  getProfile();
+                  uploadImage(_image);
                 }
               },
             ),
@@ -186,7 +177,8 @@ class _UserProfileState extends State<UserProfile> {
 
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50
+        source: ImageSource.camera, imageQuality: 1,maxHeight: 450.0,
+        maxWidth: 450.0
     );
 
     setState(() {
@@ -196,7 +188,7 @@ class _UserProfileState extends State<UserProfile> {
 
   _imgFromGallery() async {
     File image = await  ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50
+        source: ImageSource.gallery, imageQuality: 5,maxHeight: 450.0, maxWidth: 450.0
     );
 
     setState(() {
@@ -206,24 +198,38 @@ class _UserProfileState extends State<UserProfile> {
       print('BASE64::::$photoBase64');
     });
   }
+  
 
+  Future<Datum> uploadImage(File imageFile) async {
 
-  getProfile() async {
-    print('GET::::$photoBase64');
-    http.post("https://sam-app.vitecdevelopment.com/api/changeUserInfo",
-      headers: {
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5MWU5MGVjZS1mYjE4LTQ4NzItOGI2ZS1iMGM5OTc5MDAzNzEiLCJqdGkiOiI5ODE1YThkMTI0OTZmNzdhMjRhNmJiNmZkY2U4ZWM5NzI0ZGJjYzc3ODU1ZWFhMmRjMjNmZjQwMDA3ZDE1NzM2YWYyYWFhNDE5ZGY4ZmIyNCIsImlhdCI6MTYwOTI0NjIwMiwibmJmIjoxNjA5MjQ2MjAyLCJleHAiOjE2NDA3ODIyMDIsInN1YiI6IjIwNCIsInNjb3BlcyI6W119.PyibIpwrxbakqosyKGKVAv5XSmseazBMFwpe1d0L3Sgw3QZekPzo0HoJZrbHt7VYNlzYO1WSY6sQwfIZWZpWo_jhEQa0Oq5ETskhgVk7lNMc_EBNOOfnjEH8V6MHGLUvvZnC0rij2f1-VIbAxrLBMx0zOUP4d7WUkJGBTpnypahS7z9G3lTtLTdeDgyKZLtsW94VgI1BDcvNgOTT8cnLWWNP8E-YKf7bKPj9uL-BsJ4-0zGiCfq3bEM4y018Rtn2sZ4YOOQqP7zUrFF-DRqPJuLHOETKItijjGnqOmpFpPfbaO0U0MXSqIc5uRvp88jtYndDxAvlvBrkDEGkSmOsBVgVIQOAFRLm5cD4uP-cuumNaAuCD4ylwDppv9Mwt23RyCZcoKH42QkK76lf5XXKdwd6t3UIT7XXodudbT0Op4xLNWyHYTsJFv3F5RvIa0-fPEUodi4foq9tgLGbPCmb4GkGpkQqW-tqGwIytm1ySxHcPeTKpz0iUYfUHOatp5gVs1_t4_4QL1qB9ThcZt5OY6nmZtP2NzQr_w5GVKGXHyjRp7RBJiunf6PzXD1znJ_YQhUIfqh-BrpzcfB7e1clIYabTRwA_cEpTWVNQQJd2L4JXmV81hlVq_-9dfP0zeCYwxPCuO-leRr7qzB-ucf5C7w6F8pncmpLSXHWAcS5SjU',
-      },
-      body: {'fullName': "p7cQUq7qkNRz78L3w2yRJA==", 'avatar': photoBase64}
+    final StringBuffer url = new StringBuffer("https://sam-app.vitecdevelopment.com/api/changeUserInfo");
 
-    ).then((response) {
-      print('SUCC::::${response.statusCode}');
+    Dio dio = new Dio();
+    var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5MWU5MGVjZS1mYjE4LTQ4NzItOGI2ZS1iMGM5OTc5MDAzNzEiLCJqdGkiOiI4ODViNDc1YjA0YzM1OThiZWVkNjQwNDBkMGFiMTMxYTE2MjhiNzRiYWYxYjViMjRjN2M1Nzg4YjU5ZmRmNTk4MmM0ZWYzMmZmZWE5NTllOCIsImlhdCI6MTYwOTMwODUyNCwibmJmIjoxNjA5MzA4NTI0LCJleHAiOjE2NDA4NDQ1MjQsInN1YiI6IjIwNCIsInNjb3BlcyI6W119.KGZHR3tYRuYCi-3XexOoVhd3-Aa_gCmRV_ETuszqumgghF5cWPJYG77GQnCE9BV5xfma3RSgMuNakgM9ZG1m_SCMF94Zz-BjglBgypX_p5CpT1eCOBt4Fg2YoxP7uHyov5-0e1o0z6mCGuWDjE-PhxPMJwV-rvsDtVbo4Je-vRvAsaekkJvcxTsBGzxMYL-m7_EKYp044UDuSBxnShb1hb7ISwWcHRKhSl1oK8dBzdRnq6XK4sqsFEHYYE57AnNwPcgGG8k2jbz54WkaDXEJcDvO1rR-ztFYzWmTMoYsM8NnBgRPLg5kiPacEaJukh1T2GMwZdAUs4xIQ_vCzls9w0DjdB9AFplW1Oi904ifMWxNUL0jl8h2-5EtScPfbzLVUYXiJUHW_Y_xR68pyxsrcIXoB-gMFKUZaMgbhXFrE3iV-KUvzlo6sD0KEeuyTEjsEdXAYnJOa-NjTfq7eIKYsFTiqLPcV-hPDxofv4zp2dbdHldFQgnLl_Va5uoy5Gmp1E2-OMouaceu3maKYFIOSsHP_z8a0l3DD_6aNx4V7RyRLrCpqhRZsF_QR-cFHcbU8aLJWPn-VwiYYj3IOvTwYmtLBD76upzKNwTx1Pp88vzGZh3gwknPSE4kLHRbLz24tiqcah0MM_SQO36iXchdZOkAdagghIlxTE63dc_Y40U';
+    try {
+      FormData formData = FormData.fromMap(
+        { "fullName": "p7cQUq7qkNRz78L3w2yRJA==",
+          "avatar": await MultipartFile.fromFile(imageFile.path)
+        },
+      );
 
-      if (response.statusCode == 200) {
-        print('CALLED::::;${json.decode(response.body)}');
+      if (token != null) {
+        dio.options.headers["Authorization"] = "Bearer $token";
       }
-    });
+      var response = await dio.post(url.toString(), data: formData);
+      print(response.data);
+
+      if(response.data['success']){
+        Utility.showToast(response.data['message']);
+        Navigator.pop(context);
+
+      }else{
+        Utility.showToast(response.data['message']);
+      }
+      return Future.value(response.data);
+
+    } on DioError catch (e) {
+      Utility.showToast(e.message);
+    }
   }
-
-
 }
