@@ -276,8 +276,9 @@ class _CompassScreenState extends State<CompassScreen> {
       )
     );
   }
-
 }
+
+
 List<checkItem> checkList = <checkItem>[
    checkItem('Meeting Room'),
    checkItem('Open Space'),

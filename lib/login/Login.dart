@@ -71,25 +71,35 @@ class _LoginState extends State<Login_1> {
   Item item;
   List<String>_listemail = List();
 
+  static const platform = const MethodChannel('samples.flutter.dev/battery');
+
+  String _batteryLevel = 'Unknown battery level.';
+
+  Future<void> _getBatteryLevel() async {
+    String batteryLevel;
+    try {
+      final int result = await platform.invokeMethod('getBatteryLevel');
+      batteryLevel = 'Battery level at $result % .';
+    } on PlatformException catch (e) {
+      batteryLevel = "Failed to get battery level: '${e.message}'.";
+    }
+
+    setState(() {
+      _batteryLevel = batteryLevel;
+      Utility.showToast(_batteryLevel);
+    });
+  }
+
 
   Future _showNotification(Map<String, dynamic> message) async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'channel id',
-      'channel name',
-      'channel desc',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails('channel id', 'channel name', 'channel desc',
+      importance: Importance.max, priority: Priority.high);
 
-    var platformChannelSpecifics =
-    new NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'new message arived',
-      'i want ${message['data']['title']} for ${message['data']['price']}',
-      platformChannelSpecifics,
-      payload: 'Default_Sound',
-    );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+
+    var platformChannelSpecifics = new NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'new message arived',
+      'i want ${message['data']['title']} for ${message['data']['price']}', platformChannelSpecifics, payload: 'Default_Sound');
   }
 
   Future<void> startService()
@@ -106,6 +116,7 @@ class _LoginState extends State<Login_1> {
   @override
   void initState() {
     super.initState();
+    _getBatteryLevel();
 
     dbInit();
      main();

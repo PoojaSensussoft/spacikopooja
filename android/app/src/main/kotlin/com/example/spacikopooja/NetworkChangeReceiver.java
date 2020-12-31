@@ -10,7 +10,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (checkInternet(context)) {
-//            Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_LONG).show();
         }
     }
 
