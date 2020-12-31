@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
@@ -70,6 +71,7 @@ class _LoginState extends State<Login_1> {
   Item item;
   List<String>_listemail = List();
 
+
   Future _showNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channel id',
@@ -88,6 +90,16 @@ class _LoginState extends State<Login_1> {
       platformChannelSpecifics,
       payload: 'Default_Sound',
     );
+  }
+
+  Future<void> startService()
+  async {
+    if(Platform.isAndroid) {
+      print('SERVICE::::');
+      var methodChannel=MethodChannel("com.example.messages");
+      String data=await methodChannel.invokeMethod("startService");
+      debugPrint(data);
+    }
   }
 
 
@@ -310,7 +322,7 @@ class _LoginState extends State<Login_1> {
                     ),
 
                     onPressed: () async {
-                      if(_formKey.currentState.validate()){
+                      /*if(_formKey.currentState.validate()){
                         List<Map>result = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[email.text]);
 
                         if(result.length!=0){
@@ -355,7 +367,9 @@ class _LoginState extends State<Login_1> {
                           Utility.showToast("User is not Exist");
                           print('else_2::::${result.length}');
                         }
-                      }
+                      }*/
+
+                      startService();
                     },
                   ),
                 ),
