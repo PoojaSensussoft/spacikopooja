@@ -178,7 +178,7 @@ class _LoginState extends State<Login_1> {
     var email = prefs.getString(Utility.USER_EMAIL);
     print('get_mail::::$email');
     runApp(MaterialApp(debugShowCheckedModeBanner: false,
-        home: email == null ? Login() : FirstInroScreen()));
+        home: email == null ? Login() : FirstIntro()));
   }
 
 
@@ -515,7 +515,7 @@ class _LoginState extends State<Login_1> {
 
       Future.delayed(Duration(milliseconds: 50), () {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
+            MaterialPageRoute(builder: (BuildContext context) => FirstIntro()));
       });
     }
     return 'signInWithGoogle succeeded: $user';
@@ -603,7 +603,7 @@ class _LoginState extends State<Login_1> {
 
         Future.delayed(Duration(milliseconds: 50), () {
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) => FirstInroScreen()));
+              MaterialPageRoute(builder: (BuildContext context) => FirstIntro()));
         });
       }
 

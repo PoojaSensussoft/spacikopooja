@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps
-import FBSDKCoreKit
+
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,6 +9,7 @@ import FBSDKCoreKit
   override func application(
    _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    GMSServices.provideAPIKey("AIzaSyA_Sso_0edwfC1dde6Xnx_JkTgjM2sDh7s")
     
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let batteryChannel = FlutterMethodChannel(name: "samples.flutter.dev/battery", binaryMessenger: controller.binaryMessenger)
@@ -24,6 +25,10 @@ import FBSDKCoreKit
     })
     
     GeneratedPluginRegistrant.register(with: self)
+//   if #available(iOS 10.0, *) {
+//      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+//    }
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     

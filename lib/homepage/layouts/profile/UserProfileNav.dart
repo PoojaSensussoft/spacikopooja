@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/booking/BookingSceen.dart';
+import 'package:spacikopooja/contactus/ContactUs.dart';
 import 'package:spacikopooja/homepage/layouts/profile/MyProfile.dart';
 import 'package:spacikopooja/login/Login.dart';
 import 'package:spacikopooja/utils/Utility.dart';
@@ -87,10 +88,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
+    return  Container(
             child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -431,7 +429,10 @@ class _UserProfileNavState extends State<UserProfileNav> {
                       ),
                     ],
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => ContactUs()));
+                  },
                 ),
 
                 /*Contact us*/
@@ -480,9 +481,8 @@ class _UserProfileNavState extends State<UserProfileNav> {
               ],
             ),
           ),
-        )),
-      ),
-    );
+        ));
+
   }
 
   void show_dialog(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/homepage/Home.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
 import 'SecondIntroScreen.dart';
@@ -160,7 +161,7 @@ class _FirstInroScreeState extends State<FirstInroScreen> {
 
                               onTap: (){
                                 Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(builder: (BuildContext context) => SecondIntroScreen()));
+                                    MaterialPageRoute(builder: (BuildContext context) => Home()));
                               },
                             ),
                           ),

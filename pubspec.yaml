@@ -71,6 +71,15 @@ dependencies:
 
   # API calling
   dio: any
+  redux: ^4.0.0
+  flutter_redux: ^0.7.0
+  redux_persist: ^0.8.3
+
+  #Contact services
+  contacts_service: ^0.3.10
+
+  #permission
+  permission_handler: ^5.0.1+1
 
 
 
