@@ -7,13 +7,13 @@ import android.widget.Toast
 
 class NetworkChangeReceiver : BroadcastReceiver() {
     @Override
-    fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(context: Context?, intent: Intent?) {
         if (checkInternet(context)) {
         }
     }
 
     fun checkInternet(context: Context?): Boolean {
-        val serviceManager = ServiceManager(context)
+        val serviceManager = ServiceManager(context!!)
         return if (serviceManager.isNetworkAvailable) {
             Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show()
             true

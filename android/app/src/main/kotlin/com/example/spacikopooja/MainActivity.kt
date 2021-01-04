@@ -1,9 +1,7 @@
 package com.example.spacikopooja
 import android.content.*
-import android.net.ConnectivityManager
 import android.os.BatteryManager
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -12,6 +10,10 @@ import io.flutter.plugin.common.MethodChannel
 
 open class MainActivity: FlutterActivity() {
     private var mNetworkReceiver: BroadcastReceiver? = null
+
+    private val sharedText: String? = null
+    private val _CHANNEL = "app.channel.shared.data"
+
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
@@ -41,6 +43,7 @@ open class MainActivity: FlutterActivity() {
 //        super.onDestroy()
 //        unregisterNetworkChanges()
 //    }
+
 
     private val CHANNEL = "samples.flutter.dev/battery"
 

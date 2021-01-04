@@ -1,7 +1,10 @@
 import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:spacikopooja/contactus/ContactDeatilsMain.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
+
 
 class ContactUs extends StatefulWidget {
   @override
@@ -10,23 +13,29 @@ class ContactUs extends StatefulWidget {
 
 class _ContactUsState extends State<ContactUs> {
   List<Contact> contacts = [];
-  List<Contact> contactsFiltered = [];
+  List<CustomContact> _uiCustomContacts = List<CustomContact>();
+  List<CustomContact> contactsFiltered = [];
 
   Map<String, Color> contactsColorMap = new Map();
   TextEditingController _controller = new TextEditingController();
+  var isLongActive = false;
+  List colors = [Colors.green, Colors.indigo, Colors.yellow, Colors.orange];
 
 
   @override
   void initState() {
-    super.initState();
     getPermission();
+    // seeContact();
+    super.initState();
   }
 
 
   Future<void> getPermission() async {
     if (await Permission.contacts.request().isGranted) {
-      Future.delayed(Duration(milliseconds: 100), () {
-        getAllContacts();
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          getAllContacts();
+        });
       });
 
       _controller.addListener(() {
@@ -37,45 +46,43 @@ class _ContactUsState extends State<ContactUs> {
 
 
   void filterContacts() {
-    List<Contact> _contacts = [];
-    _contacts.addAll(contacts);
+    List<CustomContact> _contacts = [];
+    _contacts.addAll(_uiCustomContacts);
 
     if(_controller.text.isNotEmpty){
       _contacts.retainWhere((element){
 
-      String searchTerm = _controller.text.toLowerCase();
-      String searchTermFlatten = flattenPhoneNumber(searchTerm);
-      String contactName = element.displayName.toLowerCase();
-      bool nameMatches = contactName.contains(searchTerm);
+        String searchTerm = _controller.text.toLowerCase();
+        String searchTermFlatten = flattenPhoneNumber(searchTerm);
+        String contactName = element.contact.displayName.toLowerCase();
+        bool nameMatches = contactName.contains(searchTerm);
 
-      if (nameMatches == true) {
-        return true;
-      }
+        if (nameMatches == true) {
+          return true;
+        }
 
-      if (searchTermFlatten.isEmpty) {
-        return false;
-      }
+        if (searchTermFlatten.isEmpty) {
+          return false;
+        }
       });
-      }
+    }
 
-      setState(() {
-        contactsFiltered = _contacts;
-      });
+    setState(() {
+      contactsFiltered = _contacts;
+    });
   }
 
-    String flattenPhoneNumber(String phoneStr) {
-        return phoneStr.replaceAllMapped(RegExp(r'^(\+)|\D'), (Match m) {
-          return m[0] == "+" ? "+" : "";
-        });
-      }
+  String flattenPhoneNumber(String phoneStr) {
+    return phoneStr.replaceAllMapped(RegExp(r'^(\+)|\D'), (Match m) {
+      return m[0] == "+" ? "+" : "";
+    });
+  }
 
 
   getAllContacts() async {
-    List colors = [Colors.green, Colors.indigo, Colors.yellow, Colors.orange];
-
-    int colorIndex = 0;
     List<Contact> _contacts = (await ContactsService.getContacts()).toList();
 
+    int colorIndex = 0;
     _contacts.forEach((contact) {
       Color baseColor = colors[colorIndex];
 
@@ -87,8 +94,70 @@ class _ContactUsState extends State<ContactUs> {
       }
     });
 
+
     setState(() {
       contacts = _contacts;
+      _uiCustomContacts = contacts.map((e) => CustomContact(contact: e)).toList();
+    });
+  }
+
+  void seeContact()async{
+    final PermissionStatus permissionStatus = await _getPermission();
+    if (permissionStatus == PermissionStatus.granted) {
+      refreshContacts();
+
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              CupertinoAlertDialog(
+                title: Text('Permissions error'),
+                content: Text('Please enable contacts access '
+                    'permission in system settings'),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    child: Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                ],
+              ));
+    }
+  }
+
+  Future<PermissionStatus> _getPermission() async {
+    final PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.denied) {
+      final Map<Permission, PermissionStatus> permissionStatus =
+      await [Permission.contacts].request();
+      return permissionStatus[Permission.contacts] ??
+          PermissionStatus.undetermined;
+    } else {
+      return permission;
+    }
+  }
+
+  Future<void> refreshContacts() async {
+    List colors = [Colors.green, Colors.indigo, Colors.yellow, Colors.orange];
+
+    int colorIndex = 0;
+    // List<Contact> _contacts = (await ContactsService.getContacts()).toList();
+
+    List<Contact> _contacts = (await ContactsService.getContacts(withThumbnails: false, iOSLocalizedLabels: false)).toList();
+
+    _contacts.forEach((contact) {
+      Color baseColor = colors[colorIndex];
+
+      contactsColorMap[contact.displayName] = baseColor;
+      colorIndex++;
+      if (colorIndex == colors.length) {
+        colorIndex = 0;
+      }
+    });
+
+    setState(() {
+      contacts = _contacts;
+      _uiCustomContacts = contacts.map((e) => CustomContact(contact: e)).toList();
     });
   }
 
@@ -103,134 +172,192 @@ class _ContactUsState extends State<ContactUs> {
 
       body: Container(
         height: MediaQuery.of(context).size.height,
-          color: spacikoColor.ColorPrimary,
+        color: spacikoColor.ColorPrimary,
 
-          child: Column(
-            children: [
+        child: Column(
+          children: [
 
-              SizedBox(height: 10),
+            SizedBox(height: 10),
 
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_ios_sharp, color: spacikoColor.Colorwhite), iconSize: 20,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back_ios_sharp, color: spacikoColor.Colorwhite), iconSize: 20,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
 
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Text('Contact Us', textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18, color: spacikoColor.Colorwhite, fontFamily: 'poppins_semibold'),
-                      ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 40),
+                    child: Text('Contact Us', textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: spacikoColor.Colorwhite, fontFamily: 'poppins_semibold'),
                     ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 10),
-
-              Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                height: 45,
-
-                child: TextField(
-                  controller: _controller,
-                  style: TextStyle(color: spacikoColor.Colorwhite),
-                  cursorColor: spacikoColor.Colorwhite,
-
-                  decoration: InputDecoration(
-                    labelText: 'Search',
-                    labelStyle: TextStyle(color: spacikoColor.Colorwhite),
-
-                    border: new OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                        borderSide: new BorderSide(
-                            color: spacikoColor.Colorwhite,
-                        )
-                    ),
-
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: spacikoColor.Colorwhite)),
-                      prefixIcon: Icon(Icons.search, color: spacikoColor.Colorwhite),
                   ),
                 ),
-              ),
+              ],
+            ),
 
-              SizedBox(height: 15),
+            SizedBox(height: 10),
 
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: spacikoColor.Colorwhite,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 20),
+              height: 45,
+
+              child: TextField(
+                controller: _controller,
+                style: TextStyle(color: spacikoColor.Colorwhite),
+                cursorColor: spacikoColor.Colorwhite,
+
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  labelStyle: TextStyle(color: spacikoColor.Colorwhite),
+
+                  border: new OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: new BorderSide(
+                        color: spacikoColor.Colorwhite,
+                      )
                   ),
 
-                  child: Padding(padding: EdgeInsets.only(top: 10),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(color: spacikoColor.Colorwhite)),
+                  prefixIcon: Icon(Icons.search, color: spacikoColor.Colorwhite),
+                ),
+              ),
+            ),
 
-                    child: ListView.builder(
+            SizedBox(height: 15),
+
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: spacikoColor.Colorwhite,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                ),
+
+                child: Padding(padding: EdgeInsets.only(top: 10),
+
+                  child:_uiCustomContacts.length!=0?
+
+                  ListView.builder(
                       shrinkWrap: true,
                       padding: EdgeInsets.zero,
-                        itemCount: isSearching == true ? contactsFiltered.length : contacts.length,
-                      itemBuilder: (context, index){
-                        
-                        Contact contact = isSearching == true ? contactsFiltered[index] : contacts[index];
+                      itemCount: isSearching == true ? contactsFiltered.length : _uiCustomContacts.length,
 
-                        var baseColor = contactsColorMap[contact.displayName] as dynamic;
+
+                      itemBuilder: (context, index){
+                        CustomContact contact = isSearching == true ? contactsFiltered[index] : _uiCustomContacts[index];
+
+                        var baseColor = contactsColorMap[contact.contact.displayName] as dynamic;
                         Color color1 = baseColor[800];
                         Color color2 = baseColor[400];
 
-                        return ListTile(
-                            title: Text(contact.displayName),
-                            subtitle: Text(contact.phones.length > 0 ? contact.phones.elementAt(0).value : ''),
+                        return GestureDetector(
+                          onLongPress: () {
+                            setState(() {
+                              isLongActive = true;
+                              contact.isChecked = !contact.isChecked;
+                            });
+                          },
 
-                            leading: (contact.avatar != null && contact.avatar.length > 0) ?
 
-                            CircleAvatar(
-                              backgroundImage: MemoryImage(contact.avatar),
-                            ) :
+                          onTap: (){
+                            setState(() {
+                              if(isLongActive){
+                                contact.isChecked = !contact.isChecked;
 
-                            Container(
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                        colors: [
-                                          color1,
-                                          color2,
-                                        ],
-                                        begin: Alignment.bottomLeft,
-                                        end: Alignment.topRight
-                                    )
-                                ),
+                              }else{
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                    ContactDeatilsMain(contact.contact, onContactDeviceSave: contactOnDeviceHasBeenUpdated)));
+                              }
+                            });
+                          },
 
-                                child: CircleAvatar(
-                                    child: Text(
-                                        contact.initials(),
-                                        style: TextStyle(
-                                            color: Colors.white
-                                        )
-                                    ),
-                                    backgroundColor: Colors.transparent
-                                )
-                            )
+                          child: ListTile(
+                              title: Text(contact.contact.displayName),
+                              subtitle: Text(contact.contact.phones.length > 0 ? contact.contact.phones.elementAt(0).value : ''),
+
+                              leading: (contact.contact.avatar != null && contact.contact.avatar.length > 0) ?
+
+                              CircleAvatar(
+                                backgroundImage: MemoryImage(contact.contact.avatar),
+                              ) :
+
+                              Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                          colors: [
+                                            color1,
+                                            color2,
+                                          ],
+                                          begin: Alignment.bottomLeft,
+                                          end: Alignment.topRight
+                                      )
+                                  ),
+
+                                  child: CircleAvatar(
+                                      child: Text(
+                                          contact.contact.initials(),
+                                          style: TextStyle(color: Colors.white)
+                                      ),
+                                      backgroundColor: Colors.transparent
+                                  )
+                              ),
+
+                            trailing: Checkbox(
+                              activeColor: spacikoColor.ColorPrimary,
+                              value: contact.isChecked,
+                              onChanged: (bool value){
+                                setState(() {
+                                  contact.isChecked = value;
+                                });
+                              },
+                            ),
+                          ),
                         );
                       }
-                    ),
+                  ) : Center(child: CircularProgressIndicator()),
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+          ],
         ),
+      ),
     );
   }
 
+  void contactOnDeviceHasBeenUpdated(Contact contact) {
+    this.setState(() {
+      var id = contacts.indexWhere((c) => c.identifier == contact.identifier);
+      contacts[id] = contact;
+      _uiCustomContacts = contacts.map((e) => CustomContact(contact: e)).toList();
+
+      int colorIndex = 0;
+      _uiCustomContacts.forEach((contact) {
+        Color baseColor = colors[colorIndex];
+
+        contactsColorMap[contact.contact.displayName] = baseColor;
+        colorIndex++;
+
+        if (colorIndex == colors.length) {
+          colorIndex = 0;
+        }
+      });
+    });
+  }
 }
 
 
+class CustomContact {
+  final Contact contact;
+  bool isChecked;
 
-
-
-
+  CustomContact({
+    this.contact,
+    this.isChecked = false,
+  });
+}
