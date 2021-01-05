@@ -39,14 +39,6 @@ class _UserProfileState extends State<UserProfile> {
               child: Stack(
                 children: <Widget>[
 
-                  // Container(
-                  //   width: 100,
-                  //   height: 100,
-                  //   child: CircleAvatar(
-                  //    backgroundImage: NetworkImage("https://autix.ch/wp-content/uploads/profile-placeholder.png"),
-                  //   ),
-                  // ),
-
                   _image != null ?
                   ClipRRect(
                     borderRadius: BorderRadius.circular(50),

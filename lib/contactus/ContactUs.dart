@@ -1,10 +1,39 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:spacikopooja/contactus/ContactDeatilsMain.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
+
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  final AsyncCallback resumeCallBack;
+  final AsyncCallback suspendingCallBack;
+
+  LifecycleEventHandler({
+    this.resumeCallBack,
+    this.suspendingCallBack,
+  });
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (resumeCallBack != null) {
+          await resumeCallBack();
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        if (suspendingCallBack != null) {
+          await suspendingCallBack();
+        }
+        break;
+    }
+  }
+}
 
 class ContactUs extends StatefulWidget {
   @override
@@ -25,8 +54,14 @@ class _ContactUsState extends State<ContactUs> {
   @override
   void initState() {
     getPermission();
-    // seeContact();
     super.initState();
+
+    WidgetsBinding.instance.addObserver(
+        LifecycleEventHandler(resumeCallBack: () async => setState(() {
+          print('CALLED:::::::');
+          getPermission();
+        }))
+    );
   }
 
 
@@ -94,55 +129,17 @@ class _ContactUsState extends State<ContactUs> {
       }
     });
 
-
     setState(() {
       contacts = _contacts;
       _uiCustomContacts = contacts.map((e) => CustomContact(contact: e)).toList();
     });
   }
 
-  void seeContact()async{
-    final PermissionStatus permissionStatus = await _getPermission();
-    if (permissionStatus == PermissionStatus.granted) {
-      refreshContacts();
-
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              CupertinoAlertDialog(
-                title: Text('Permissions error'),
-                content: Text('Please enable contacts access '
-                    'permission in system settings'),
-                actions: <Widget>[
-                  CupertinoDialogAction(
-                    child: Text('OK'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  )
-                ],
-              ));
-    }
-  }
-
-  Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.denied) {
-      final Map<Permission, PermissionStatus> permissionStatus =
-      await [Permission.contacts].request();
-      return permissionStatus[Permission.contacts] ??
-          PermissionStatus.undetermined;
-    } else {
-      return permission;
-    }
-  }
 
   Future<void> refreshContacts() async {
     List colors = [Colors.green, Colors.indigo, Colors.yellow, Colors.orange];
 
     int colorIndex = 0;
-    // List<Contact> _contacts = (await ContactsService.getContacts()).toList();
-
     List<Contact> _contacts = (await ContactsService.getContacts(withThumbnails: false, iOSLocalizedLabels: false)).toList();
 
     _contacts.forEach((contact) {
@@ -320,9 +317,9 @@ class _ContactUsState extends State<ContactUs> {
                           ),
                         );
                       }
-                  ) : Center(child: CircularProgressIndicator()),
-                  ),
-                ),
+                  )
+                      : Center(child: CircularProgressIndicator())),
+              ),
               ),
           ],
         ),

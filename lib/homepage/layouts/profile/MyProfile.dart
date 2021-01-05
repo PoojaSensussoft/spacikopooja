@@ -24,8 +24,8 @@ class _MyProfileState extends State<MyProfile> {
 
             IconButton(
               alignment: Alignment.centerLeft,
-              icon: Icon(Icons.arrow_back_ios_sharp,
-                  color: spacikoColor.Colorwhite),
+              icon: Icon(Icons.arrow_back_ios_sharp, color: spacikoColor.Colorwhite),
+
               iconSize: 25,
               onPressed: () {
                 setState(() {

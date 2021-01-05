@@ -40,9 +40,7 @@ class _ContactDeatilsMainState extends State<ContactDeatilsMain> {
                     style: TextStyle(fontSize: 18, color: spacikoColor.Colorwhite, fontFamily: 'poppins_semibold'),
                   ),
                 ),
-
                 _paddingPopup(context,widget._contact, widget.onContactDeviceSave),
-
               ],
             ),
 

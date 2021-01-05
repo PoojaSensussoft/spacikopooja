@@ -435,6 +435,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                       ),
                     ],
                   ),
+
                   onTap: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (BuildContext context) => ContactUs()));
