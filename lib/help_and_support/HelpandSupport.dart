@@ -76,62 +76,105 @@ class _HelpandSupportState extends State<HelpandSupport> {
                         topRight: Radius.circular(30),
                         topLeft: Radius.circular(30))),
 
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(20),
                 child: ListView(
                   children: [
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)
+                      ),
+                      elevation: 3,
+                      color: spacikoColor.Colorwhite,
                       child: Text('Share Text',
-                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                       onPressed: () async => await _shareText(),
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)
+                      ),
+                      elevation: 5,
+                      color: spacikoColor.Colorwhite,
                       child: Text('Share Image',
-                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                       onPressed: () async => await _shareImage(),
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)
+                      ),
+                      elevation: 5,
+                      color: spacikoColor.Colorwhite,
                       child: Text('Share Multiple Images',
-                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                       onPressed: () async => await _shareMultipleImage(),
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)
+                      ),
+                      elevation: 5,
+                      color: spacikoColor.Colorwhite,
                       child: Text('Share Image from url',
-                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                       onPressed: () async => await _shareUrlFile(),
-
-                   /*   onPressed: (){
-                        _makePhoneCall('tel: 1234567890');
-                      },*/
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        elevation: 5,
+                        color: spacikoColor.Colorwhite,
                       child: Text('User Intent Call service',
-                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                          style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                         onPressed: (){
                           _makePhoneCall('tel: 1234567890');
                         }
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        elevation: 5,
+                        color: spacikoColor.Colorwhite,
                         child: Text('User Intent Gmail service',
-                            style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                            style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                         onPressed: (){
                           launch(_emailLaunchUri.toString());
                         }
                     ),
 
-                    FlatButton(color: spacikoColor.ColorPrimary,
+                    SizedBox(height: 5),
+
+                    RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        elevation: 5,
+                        color: spacikoColor.Colorwhite,
                         child: Text('User Intent WhatsApp Send', style: TextStyle(fontSize: 14,
-                            fontFamily: 'poppins_regular', color: spacikoColor.Colorwhite)),
+                            fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
 
                         onPressed: () async {
                           var whatsappUrl ="whatsapp://send?phone=$phone";
@@ -139,6 +182,8 @@ class _HelpandSupportState extends State<HelpandSupport> {
                               Utility.showToast("open whatsapp app link or do a snackbar with notification that there is no whatsapp installed");
                         }
                     ),
+
+                    SizedBox(height: 5),
                   ],
                 ),
               ),
@@ -203,7 +248,6 @@ class _HelpandSupportState extends State<HelpandSupport> {
     if (await canLaunch(url)) {
       await launch(url);
       await launch(url);
-
     } else {
       Utility.showToast('Could not launch $url');
     }

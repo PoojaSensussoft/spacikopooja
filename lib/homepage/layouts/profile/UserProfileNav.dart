@@ -1,11 +1,16 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spacikopooja/MyListing/MyListing.dart';
+import 'package:spacikopooja/MyListing/PoojaVerifyOtp.dart';
+import 'package:spacikopooja/MyListing/otp.dart';
+import 'package:spacikopooja/VideoPlayer.dart';
 import 'package:spacikopooja/booking/BookingSceen.dart';
 import 'package:spacikopooja/contactus/ContactUs.dart';
 import 'package:spacikopooja/help_and_support/HelpandSupport.dart';
 import 'package:spacikopooja/homepage/layouts/profile/MyProfile.dart';
 import 'package:spacikopooja/login/Login.dart';
+import 'package:spacikopooja/otpscreen/OtpVerification.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
@@ -311,7 +316,11 @@ class _UserProfileNavState extends State<UserProfileNav> {
                       ),
                     ],
                   ),
-                  onTap: () {},
+
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => MyListing()));
+                  },
                 ),
 
                 /*my reservation*/
@@ -329,6 +338,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                                 height: 25,
                                 width: 25),
                           ),
+
                           Container(
                             margin: EdgeInsets.only(left: 13, top: 25),
                             child: Text(
@@ -353,7 +363,11 @@ class _UserProfileNavState extends State<UserProfileNav> {
                       ),
                     ],
                   ),
-                  onTap: () {},
+
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => MainVideoPlayer()));
+                  },
                 ),
 
                 /*Dispuet center*/
@@ -394,7 +408,11 @@ class _UserProfileNavState extends State<UserProfileNav> {
                       ),
                     ],
                   ),
-                  onTap: () {},
+
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => PoojaVerifyOTP()));
+                  },
                 ),
 
                 /*Contact us*/

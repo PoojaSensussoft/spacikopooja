@@ -139,7 +139,6 @@ Widget _paddingPopup(BuildContext context, Contact contact, Function(Contact p1)
 
       case 2:
         show_dialog(context, contact);
-
         break;
     }
   },
@@ -166,6 +165,7 @@ void show_dialog(BuildContext context, Contact contact) {
       });
     },
   );
+
 
   AlertDialog alertDialog = AlertDialog(
     content: Text(
@@ -220,9 +220,7 @@ class ItemsTile extends StatelessWidget {
       children: <Widget>[
         ListTile(title: Text(_title)),
         Column(
-          children: _items
-              .map(
-                (i) => Padding(
+          children: _items.map((i) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0.0),
               child: ListTile(
                 title: Text(i.label ?? ""),
@@ -234,7 +232,5 @@ class ItemsTile extends StatelessWidget {
       ],
     );
   }
-
-
 }
 
