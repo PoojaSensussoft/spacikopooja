@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacikopooja/utils/spacikoColor.dart';
 import 'package:video_player/video_player.dart';
 
 class MainVideoPlayer extends StatelessWidget {
@@ -18,19 +19,19 @@ class MainVideoPlayer extends StatelessWidget {
           VideoPlayerRemote(
             url: videos[0],
           ),
-          Container(
+          /*Container(
             height: 100,
             color: Colors.red[600],
             child: const Center(child: Text('Item A')),
-          ),
+          ),*/
           VideoPlayerRemote(
             url: videos[1],
           ),
-          Container(
+          /*Container(
             height: 100,
             color: Colors.greenAccent[500],
             child: const Center(child: Text('Item B')),
-          ),
+          ),*/
           VideoPlayerRemote(
             url: videos[2],
           ),
@@ -80,13 +81,18 @@ class _VideoPlayerRemoteState extends State<VideoPlayerRemote> {
             padding: const EdgeInsets.all(20),
             child: AspectRatio(
               aspectRatio: controller.value.aspectRatio,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: <Widget>[
-                  VideoPlayer(controller),
-                  _PlayPauseOverlay(controller: controller),
-                  VideoProgressIndicator(controller, allowScrubbing: true),
-                ],
+              child: Card(
+                color: spacikoColor.Colorwhite,
+                elevation: 3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    VideoPlayer(controller),
+                    _PlayPauseOverlay(controller: controller),
+                    VideoProgressIndicator(controller, allowScrubbing: true),
+                  ],
+                ),
               ),
             ),
           ),

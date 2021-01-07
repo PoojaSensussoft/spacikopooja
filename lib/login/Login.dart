@@ -102,16 +102,6 @@ class _LoginState extends State<Login_1> {
       'i want ${message['data']['title']} for ${message['data']['price']}', platformChannelSpecifics, payload: 'Default_Sound');
   }
 
-  Future<void> startService()
-  async {
-    if(Platform.isAndroid) {
-      print('SERVICE::::');
-      var methodChannel=MethodChannel("com.example.messages");
-      String data=await methodChannel.invokeMethod("startService");
-      debugPrint(data);
-    }
-  }
-
 
   @override
   void initState() {
@@ -323,9 +313,9 @@ class _LoginState extends State<Login_1> {
                   width: MediaQuery.of(context).size.width,
                   height: 52,
                   margin: EdgeInsets.only(left: 25, right: 25, top: 10),
+
                   child: RaisedButton(
                     color: spacikoColor.ColorPrimary,
-
                     child: Text("Log In", style: TextStyle(fontSize: 18, fontFamily: "poppins_semibold", color: spacikoColor.Colorwhite),),
 
                     shape: RoundedRectangleBorder(
@@ -333,7 +323,7 @@ class _LoginState extends State<Login_1> {
                     ),
 
                     onPressed: () async {
-                      /*if(_formKey.currentState.validate()){
+                      if(_formKey.currentState.validate()){
                         List<Map>result = await db.rawQuery('SELECT * FROM my_table WHERE email=?',[email.text]);
 
                         if(result.length!=0){
@@ -378,9 +368,7 @@ class _LoginState extends State<Login_1> {
                           Utility.showToast("User is not Exist");
                           print('else_2::::${result.length}');
                         }
-                      }*/
-
-                      startService();
+                      }
                     },
                   ),
                 ),

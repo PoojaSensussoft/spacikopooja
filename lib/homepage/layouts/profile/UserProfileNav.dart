@@ -11,6 +11,8 @@ import 'package:spacikopooja/help_and_support/HelpandSupport.dart';
 import 'package:spacikopooja/homepage/layouts/profile/MyProfile.dart';
 import 'package:spacikopooja/login/Login.dart';
 import 'package:spacikopooja/otpscreen/OtpVerification.dart';
+import 'package:spacikopooja/pagination/DemoPaginamtion.dart';
+import 'package:spacikopooja/pagination/ListPagination.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
 
@@ -296,7 +298,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                           Container(
                             margin: EdgeInsets.only(left: 13, top: 25),
                             child: Text(
-                              'My Listings',
+                              'StartActivityFor Result',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: 'poppins_regular',
@@ -342,7 +344,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                           Container(
                             margin: EdgeInsets.only(left: 13, top: 25),
                             child: Text(
-                              'My Reservations',
+                              'Video Player',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: 'poppins_regular',
@@ -388,7 +390,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                           Container(
                             margin: EdgeInsets.only(left: 13, top: 25),
                             child: Text(
-                              'Dispute Center',
+                              'Enter OTP',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: 'poppins_regular',
@@ -415,7 +417,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                   },
                 ),
 
-                /*Contact us*/
+                /* Contact us */
                 GestureDetector(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -460,7 +462,54 @@ class _UserProfileNavState extends State<UserProfileNav> {
                   },
                 ),
 
-                /*Contact us*/
+                /* pagination */
+                GestureDetector(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 20, top: 25),
+                            child: Image(
+                                image: AssetImage('image/logout.png'),
+                                height: 25,
+                                width: 25,
+                                color: spacikoColor.ColorPrimary),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 13, top: 25),
+                            child: Text(
+                              'Pagination list',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'poppins_regular',
+                                  color: spacikoColor.Colorlightblack),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 20, top: 25),
+                        alignment: Alignment.centerRight,
+                        child: Image(
+                            image: AssetImage('image/ic_rigthtback_green.png'),
+                            height: 20,
+                            width: 20),
+                      ),
+                    ],
+                  ),
+
+                  onTap: () async {
+                    Navigator.of(context).push(
+                        // MaterialPageRoute(builder: (BuildContext context) => ListPagination()));
+                        MaterialPageRoute(builder: (BuildContext context) => DemoPagination()));
+                  },
+                ),
+
+
+                /* Logout */
                 GestureDetector(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -503,6 +552,8 @@ class _UserProfileNavState extends State<UserProfileNav> {
                     show_dialog(context);
                   },
                 ),
+
+                SizedBox(height: 20)
               ],
             ),
           ),
