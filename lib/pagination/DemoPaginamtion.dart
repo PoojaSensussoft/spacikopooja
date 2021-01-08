@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (response.statusCode == 200) {
         List albumList = List();
         var resultBody;
-        pageNo = (pageNo > 100) ? 1 : pageNo++; // resetting and incrementing page
+        pageNo = (pageNo > 100) ? 1 : pageNo++;
         apiUrl = "https://jsonplaceholder.typicode.com/albums/$pageNo/photos";
         resultBody = jsonDecode(response.body);
 
@@ -57,9 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     this._fetchData();
     super.initState();
+
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         _fetchData();
       }
     });

@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/model/NotificationList.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
+
 
 class ListPagination extends StatefulWidget {
   @override
@@ -14,21 +13,14 @@ class ListPagination extends StatefulWidget {
 
 class _ListPaginationState extends State<ListPagination> {
   ScrollController scrollController = new ScrollController();
-  // bool isLoading = false;
 
   final dio = new Dio();
   int page = 1;
-  int final_page;
-
   List<Datum> _list = new List();
-
-  ScrollController _scrollController = ScrollController();
-  bool isLoading = false;
-  List albums = List();
 
 
   Future<NotificationList> _getMoreData(int page) async {
-    print('CALLED::::${_list.length}');
+    print('CALLED::::$page');
     final StringBuffer url = new StringBuffer("http://159.89.164.128:4200/notificationList");
 
     Dio dio = new Dio();
@@ -41,23 +33,20 @@ class _ListPaginationState extends State<ListPagination> {
           "page": page.toString()
         },
       );
-      dio.options.headers["x-access-token"] = token;
 
+      dio.options.headers["x-access-token"] = token;
       var response = await dio.post(url.toString(), data: formData);
 
       if(response.data['status']){
+        print('RESPONSE:::::${response.data['data']}');
 
         /*if response status is true*/
         List<dynamic> data = response.data['data'];
-        _list = data.map((i) => Datum.fromJson(i)).toList();
 
         setState(() {
-          _list = data.map((i) => Datum.fromJson(i)).toList();
+          _list.addAll(data.map((i) => Datum.fromJson(i)).toList());
+          print('LENGTH::::${_list.length}');
         });
-
-
-        final_page = int.parse(response.data['page']) + 1;
-        print('LIST::::::;;${_list.length}    ${response.data['page']}   $final_page');
 
       }else{
         Utility.showToast(response.data['message']);
@@ -65,6 +54,7 @@ class _ListPaginationState extends State<ListPagination> {
 
     } on DioError catch (e) {
       Utility.showToast(e.message);
+      print('ERROR:::${e.message}');
     }
   }
 
@@ -74,18 +64,11 @@ class _ListPaginationState extends State<ListPagination> {
 
     _getMoreData(page);
 
-    // scrollController.addListener(() {
-    //   if (scrollController.position.maxScrollExtent ==
-    //       scrollController.offset) {
-    //     _getMoreData(final_page);
-    //     print('IF:::::$final_page');
-    //   }
-    // });
-
     scrollController.addListener(() {
       if(scrollController.position.pixels == scrollController.position.maxScrollExtent){
-        _getMoreData(final_page);
-            print('IF:::::$final_page');
+        page++;
+        _getMoreData(page);
+        print('IF:::::$page');
       }
     });
   }
@@ -123,7 +106,6 @@ class _ListPaginationState extends State<ListPagination> {
       ListView.builder(
         itemCount: _list.length,
         itemBuilder: (BuildContext context, int index){
-          print('DATA::::::${_list[index].id}');
           return ListTile(
             title: Text(_list[index].id, style: TextStyle(fontSize: 14, fontFamily: 'poppins_regular', color: spacikoColor.Colorblack)),
           );

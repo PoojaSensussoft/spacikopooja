@@ -116,8 +116,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
                           color: spacikoColor.ColorPrimary),
                     ),
                     Container(
-                      padding:
-                          const EdgeInsets.only(right: 15, top: 20, bottom: 20),
+                      padding: const EdgeInsets.only(right: 15, top: 20, bottom: 20),
                       alignment: Alignment.topRight,
                       child: GestureDetector(
                         onTap: () {},
@@ -503,8 +502,8 @@ class _UserProfileNavState extends State<UserProfileNav> {
 
                   onTap: () async {
                     Navigator.of(context).push(
-                        // MaterialPageRoute(builder: (BuildContext context) => ListPagination()));
-                        MaterialPageRoute(builder: (BuildContext context) => DemoPagination()));
+                        MaterialPageRoute(builder: (BuildContext context) => ListPagination()));
+                        // MaterialPageRoute(builder: (BuildContext context) => DemoPagination()));
                   },
                 ),
 

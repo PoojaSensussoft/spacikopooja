@@ -96,7 +96,7 @@ dependencies:
   video_player: ^1.0.1
 
   # webivew
-  webview_flutter: ^1.0.7
+#  webview_flutter: ^1.0.7
 
 
 
