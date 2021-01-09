@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
-// import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class TermsCond extends StatefulWidget {
   @override
@@ -46,20 +46,20 @@ class _TermsCondState extends State<TermsCond> {
             ),
             Expanded(
               child: Stack(
-                // children: <Widget>[
-                //   WebView(
-                //     key: _key,
-                //     initialUrl: 'https://flutter.dev',
-                //     javascriptMode: JavascriptMode.unrestricted,
-                //     onPageFinished: (finish) {
-                //       setState(() {
-                //         isLoading = false;
-                //       });
-                //     },
-                //   ),
-                //   isLoading ? Center( child: CircularProgressIndicator(),)
-                //       : Stack(),
-                // ],
+                children: <Widget>[
+                  WebView(
+                    key: _key,
+                    initialUrl: 'https://flutter.dev',
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onPageFinished: (finish) {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    },
+                  ),
+                  isLoading ? Center( child: CircularProgressIndicator(),)
+                      : Stack(),
+                ],
               ),
             ),
           ],

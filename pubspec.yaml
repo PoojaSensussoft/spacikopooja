@@ -96,7 +96,15 @@ dependencies:
   video_player: ^1.0.1
 
   # webivew
-#  webview_flutter: ^1.0.7
+  webview_flutter: ^1.0.7
+
+  # Country code picker
+  country_code_picker: ^1.7.0
+
+  # QrCode Scanner
+  qr_flutter: ^1.1.1
+
+
 
 
 

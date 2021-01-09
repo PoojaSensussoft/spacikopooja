@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spacikopooja/MyListing/MyListing.dart';
 import 'package:spacikopooja/MyListing/PoojaVerifyOtp.dart';
-import 'package:spacikopooja/MyListing/otp.dart';
 import 'package:spacikopooja/VideoPlayer.dart';
+import 'package:spacikopooja/allConcepts/AllConcepts.dart';
 import 'package:spacikopooja/booking/BookingSceen.dart';
 import 'package:spacikopooja/contactus/ContactUs.dart';
 import 'package:spacikopooja/help_and_support/HelpandSupport.dart';
 import 'package:spacikopooja/homepage/layouts/profile/MyProfile.dart';
 import 'package:spacikopooja/login/Login.dart';
-import 'package:spacikopooja/otpscreen/OtpVerification.dart';
-import 'package:spacikopooja/pagination/DemoPaginamtion.dart';
 import 'package:spacikopooja/pagination/ListPagination.dart';
 import 'package:spacikopooja/utils/Utility.dart';
 import 'package:spacikopooja/utils/spacikoColor.dart';
@@ -103,6 +101,7 @@ class _UserProfileNavState extends State<UserProfileNav> {
           child: Container(
             child: Column(
               children: <Widget>[
+
                 /*top green bottom rounded*/
                 Stack(
                   children: <Widget>[
@@ -233,6 +232,54 @@ class _UserProfileNavState extends State<UserProfileNav> {
                         MaterialPageRoute(builder: (BuildContext context) => BookingScreen()));
                   },
                 ),
+
+
+                /* Logout */
+                GestureDetector(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 20, top: 25),
+                            child: Image(
+                                image: AssetImage('image/logout.png'),
+                                height: 25,
+                                width: 25,
+                                color: spacikoColor.ColorPrimary),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 13, top: 25),
+                            child: Text(
+                              'All Concepts',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'poppins_regular',
+                                  color: spacikoColor.Colorlightblack),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(right: 20, top: 25),
+                        alignment: Alignment.centerRight,
+                        child: Image(
+                            image: AssetImage('image/ic_rigthtback_green.png'),
+                            height: 20,
+                            width: 20),
+                      ),
+                    ],
+                  ),
+
+                  onTap: () async {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => AllConcepts()));
+                  },
+                ),
+
 
                 /*help and support*/
                 GestureDetector(
@@ -506,6 +553,9 @@ class _UserProfileNavState extends State<UserProfileNav> {
                         // MaterialPageRoute(builder: (BuildContext context) => DemoPagination()));
                   },
                 ),
+
+
+
 
 
                 /* Logout */
